@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 import raytracer as rt
 
@@ -30,7 +31,7 @@ def raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_widt
     reflected_vecs = []
     mirror_positions = []
 
-    for hstat in hstats:
+    for hstat in tqdm(hstats):
         receiver_vec = rt.vector_to_receiver(hstat, receiver_pos)
         mirror_norm = rt.calculate_mirror_normal(receiver_vec, incident_vec)
         mirror_norms.append(mirror_norm)

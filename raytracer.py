@@ -29,15 +29,25 @@ def calculate_reflection(mirror_norm, incident_vec):
     return norm_vector(np.array(incident_vec - 2*mirror_norm.dot(incident_vec.dot(mirror_norm))))
 
 def calculate_mirror_positions(hstat, mirror_normal, receiver_vec, reflecting_width):
+    """
+    Calculate the positions of the 2 heliostat mirrors, seperated from the central
+    position by a distance of reflecting_width/4
+    """
     step = reflecting_width/4
     xproduct = norm_vector(np.cross(mirror_normal, receiver_vec))
     return np.array([hstat - step*xproduct, hstat + step*xproduct])
 
 def calculate_target_intersection(reflected_vec, hstat, receiver_pos):
+    """
+    Calculate the intersection point of the reflected ray and the target plane
+    """
     plane_normal = np.array([0, 0, 1])
     plane_offset = receiver_pos[2]
 
     return calculate_plane_intersection(reflected_vec, hstat, plane_normal, plane_offset)
+
+def calculate_ideal_tilt(mirror_position, receiver_pos, reflected_vec):
+    return
 
 # Generalised vector methods
 
