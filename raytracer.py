@@ -46,8 +46,15 @@ def calculate_target_intersection(reflected_vec, hstat, receiver_pos):
 
     return calculate_plane_intersection(reflected_vec, hstat, plane_normal, plane_offset)
 
-def calculate_ideal_tilt(mirror_position, receiver_pos, reflected_vec):
-    return
+def tilt_mirror_normal(mirror_position, receiver_pos, mirror_norm, incident_vec):
+    receiver_vec = vector_to_receiver(mirror_position, receiver_pos)
+    initial_reflect = calculate_reflection(mirror_norm, incident_vec)
+    xproduct = np.cross(initial_reflect, receiver_vec)
+    print(magnitude(xproduct))
+    tilt =  np.arcsin(magnitude(xproduct)) / 2
+    
+    R = calculate_rotation_matrix(xproduct/magnitude(xproduct), tilt)
+    return np.matmul(R, mirror_norm)
 
 # Generalised vector methods
 

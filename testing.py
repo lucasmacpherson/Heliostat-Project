@@ -8,8 +8,7 @@ hstats = create_heliostat_field(2, [2, 2])
 receiver_pos = np.array([0, 0, 1])
 incident_vec = norm_vector(np.array([0.5, 0, -1]))
 
-model = raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=0.1)
-
+model = raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=0.25)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -25,4 +24,3 @@ ax.quiver(hstats[:, 0], hstats[:, 1], hstats[:, 2],
 ax.scatter(receiver_pos[0], receiver_pos[1], zs=receiver_pos[2])
 ax.legend()
 plt.show()
-
