@@ -31,19 +31,25 @@ def raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_widt
     reflected_vecs = []
     mirror_positions = []
 
-    for hstat in tqdm(hstats):
+    for i, hstat in enumerate(tqdm(hstats)):
         receiver_vec = rt.vector_to_receiver(hstat, receiver_pos)
         init_mirror_norm = rt.calculate_mirror_normal(receiver_vec, incident_vec)
         mirrors, offset_vecs = rt.calculate_mirror_positions(hstat, init_mirror_norm, receiver_vec, reflecting_width)
 
-        for i in range(2):
-            mirror_positions.append(mirrors[i])
+        for j in range(2):
+            idx = (2*i + j)
+            mirror_positions.append(mirrors[j])
             if tilts is None:
-                mirror_norms.append(init_mirror_norm)
-                reflected_vecs.append(rt.calculate_reflection(init_mirror_norm, incident_vec))
-                continue
+                tilt = 0
+
+            elif isinstance(tilts, str) and tilts == 'ideal':
+                tilt = rt.calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, incident_vec)
+                print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
             
-            mirror_norm = rt.tilt_mirror_normal(init_mirror_norm, offset_vecs[i], tilts[i])
+            else:
+                tilt = tilts[idx]
+
+            mirror_norm = rt.tilt_mirror_normal(init_mirror_norm, offset_vecs[j], tilt)
             mirror_norms.append(mirror_norm)
             reflected_vecs.append(rt.calculate_reflection(mirror_norm, incident_vec))
     

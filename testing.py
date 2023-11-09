@@ -6,14 +6,14 @@ from heliostat_raytracer import *
 
 hstats = create_heliostat_field(2, [2, 2])
 receiver_pos = np.array([0, 0, 1])
-incident_vec = norm_vector(np.array([0.5, 0, -1]))
+incident_vec = norm_vector(np.array([-0.8, 0.1, -1]))
 
-""" tilts = [
-    -0.04, -0.1,
+tilts = [
+    -0.02, -0.1,
     -0.1, -0.1,
     -0.1, -0.1,
     -0.1, -0.1
-] """
+]
 
 tilts = np.array([-0.02]).repeat(2*len(hstats))
 

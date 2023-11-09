@@ -54,8 +54,8 @@ def calculate_target_intersection(reflected_vec, mirror, receiver_pos):
 def calculate_ideal_tilt(mirror_position, receiver_pos, mirror_norm, incident_vec):
     receiver_vec = vector_to_receiver(mirror_position, receiver_pos)
     initial_reflect = calculate_reflection(mirror_norm, incident_vec)
-    xproduct = np.dot(initial_reflect, receiver_vec)
-    tilt =  np.arccos(magnitude(xproduct)) / 2
+    dproduct = np.dot(initial_reflect, receiver_vec)
+    tilt = -np.arccos(dproduct) / 2
     
     return tilt
 
