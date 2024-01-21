@@ -37,7 +37,7 @@ def calculate_mirror_positions(hstat, mirror_normal, receiver_vec, reflecting_wi
 
     Function returns a tuple of (mirror_positions, offset_vectors)
     """
-    step = reflecting_width/4
+    step = reflecting_width/2
     xproduct = norm_vector(np.cross(mirror_normal, receiver_vec))
     return (np.array([hstat - step*xproduct, hstat + step*xproduct]),
             np.array([-xproduct, xproduct]))

@@ -53,6 +53,10 @@ def raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_widt
             mirror_norms.append(mirror_norm)
             reflected_vecs.append(rt.calculate_reflection(mirror_norm, incident_vec))
     
-    return {'mirror_normals': np.array(mirror_norms),
+    return {'heliostat_positions': hstats,
+            'receiver_position': receiver_pos,
+            'incident_vector': incident_vec,
+            'mirror_normals': np.array(mirror_norms),
             'reflected_vectors': np.array(reflected_vecs),
-            'mirror_positions': np.array(mirror_positions)}
+            'mirror_positions': np.array(mirror_positions)
+            }
