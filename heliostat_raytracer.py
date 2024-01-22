@@ -26,12 +26,12 @@ def create_heliostat_field(size, layout):
     heliostats = np.array(heliostats)
     return heliostats
 
-def raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=None):
+def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=None):
     mirror_norms = []
     reflected_vecs = []
     mirror_positions = []
 
-    for i, hstat in enumerate(tqdm(hstats)):
+    for i, hstat in enumerate(hstats):
         receiver_vec = rt.vector_to_receiver(hstat, receiver_pos)
         init_mirror_norm = rt.calculate_mirror_normal(receiver_vec, incident_vec)
         mirrors, offset_vecs = rt.calculate_mirror_positions(hstat, init_mirror_norm, receiver_vec, reflecting_width)
@@ -60,3 +60,10 @@ def raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_widt
             'reflected_vectors': np.array(reflected_vecs),
             'mirror_positions': np.array(mirror_positions)
             }
+
+def raytrace(model, beamwidth, beam_start_dist, raycasts=1):
+    recevier_pos = model['receiver_position']
+    incident_vec = model['incident_vector']
+
+    for i, mirror in enumerate(model['mirror_positions']):
+        start_pt = mirror + beam_start_dist*-incident_vec

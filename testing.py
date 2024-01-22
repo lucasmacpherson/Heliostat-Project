@@ -17,7 +17,7 @@ tilts = [
 
 tilts = np.array([-0.02]).repeat(2*len(hstats))
 
-model = raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=0.25, tilts=tilts)
+model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=0.25, tilts=tilts)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')

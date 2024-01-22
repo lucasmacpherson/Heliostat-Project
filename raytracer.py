@@ -63,3 +63,30 @@ def tilt_mirror_normal(mirror_normal, offset_vec, tilt):
     xproduct = norm_vector(np.cross(mirror_normal, offset_vec))
     R = calculate_rotation_matrix(xproduct, tilt)
     return np.matmul(R, mirror_normal)
+
+# Credit: https://stackoverflow.com/a/72226595
+def sunflower(n: int, alpha: float) -> np.ndarray:
+    # Number of points respectively on the boundary and inside the cirlce.
+    n_exterior = np.round(alpha * np.sqrt(n)).astype(int)
+    n_interior = n - n_exterior
+
+    # Ensure there are still some points in the inside...
+    if n_interior < 1:
+        raise RuntimeError(f"Parameter 'alpha' is too large ({alpha}), all "
+                           f"points would end-up on the boundary.")
+    # Generate the angles. The factor k_theta corresponds to 2*pi/phi^2.
+    k_theta = np.pi * (3 - np.sqrt(5))
+    angles = np.linspace(k_theta, k_theta * n, n)
+
+    # Generate the radii.
+    r_interior = np.sqrt(np.linspace(0, 1, n_interior))
+    r_exterior = np.ones((n_exterior,))
+    r = np.concatenate((r_interior, r_exterior))
+
+    # Return Cartesian coordinates from polar ones.
+    return r * np.stack((np.cos(angles), np.sin(angles)))
+
+    # NOTE: say the returned array is called s. The layout is such that s[0,:]
+    # contains X values and s[1,:] contains Y values. Change the above to
+    #   return r.reshape(n, 1) * np.stack((np.cos(angles), np.sin(angles)), axis=1)
+    # if you want s[:,0] and s[:,1] to contain X and Y values instead.

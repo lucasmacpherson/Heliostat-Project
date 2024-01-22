@@ -12,7 +12,7 @@ receiver_pos = np.array([-hstat_sep-0.087, 0, 0.585 - 0.203])
 # located 20.3cm 
 
 hstats = create_heliostat_field(2*hstat_sep, [2, 2])
-incident_vec = norm_vector(np.array([-0.8, 0.1, -1]))
+incident_vec = norm_vector(np.array([-0.25, 0, -1]))
 
 """tilts = [
     -0.02, -0.1,
@@ -22,7 +22,7 @@ incident_vec = norm_vector(np.array([-0.8, 0.1, -1]))
 ]"""
 tilts = np.array([-0.02]).repeat(2*len(hstats))
 
-model = raytrace_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=heliostat_width, tilts=tilts)
+model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=heliostat_width, tilts=tilts)
 
 fig, ax = heliostat_field_figure(model)
 plt.show()
