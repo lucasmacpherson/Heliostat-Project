@@ -82,7 +82,7 @@ def sunflower(n: int, alpha: float) -> np.ndarray:
     r_interior = np.sqrt(np.linspace(0, 1, n_interior))
     r_exterior = np.ones((n_exterior,))
     r = np.concatenate((r_interior, r_exterior))
-
+    
     # Return Cartesian coordinates from polar ones.
     return r * np.stack((np.cos(angles), np.sin(angles)))
 
