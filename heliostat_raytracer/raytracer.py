@@ -84,9 +84,15 @@ def sunflower(n: int, alpha: float) -> np.ndarray:
     r = np.concatenate((r_interior, r_exterior))
     
     # Return Cartesian coordinates from polar ones.
-    return r * np.stack((np.cos(angles), np.sin(angles)))
+    return r.reshape(n, 1) * np.stack((np.cos(angles), np.sin(angles)), axis=1)
 
-    # NOTE: say the returned array is called s. The layout is such that s[0,:]
-    # contains X values and s[1,:] contains Y values. Change the above to
-    #   return r.reshape(n, 1) * np.stack((np.cos(angles), np.sin(angles)), axis=1)
-    # if you want s[:,0] and s[:,1] to contain X and Y values instead.
+def generate_initial_beam(ray_count: int, start_pos: np.ndarray, incident_vec, scale=1):
+    points = sunflower(ray_count, alpha=0.7)
+    points_plane = np.column_stack((points, np.zeros((ray_count))))
+    R = rotation_matrix_from_vectors(np.array((0, 0, 1)), incident_vec)
+
+    rotated_points = []
+    for point in points_plane:
+        rotated_points.append(np.array((np.matmul(R, point))))
+    
+    return np.array(rotated_points)

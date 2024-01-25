@@ -66,4 +66,5 @@ def raytrace(model, beamwidth, beam_start_dist, raycasts=1):
     incident_vec = model['incident_vector']
 
     for i, mirror in enumerate(model['mirror_positions']):
-        start_pt = mirror + beam_start_dist*-incident_vec
+        start_pos = mirror + beam_start_dist*-incident_vec
+        
