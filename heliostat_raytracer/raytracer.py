@@ -86,13 +86,29 @@ def sunflower(n: int, alpha: float) -> np.ndarray:
     # Return Cartesian coordinates from polar ones.
     return r.reshape(n, 1) * np.stack((np.cos(angles), np.sin(angles)), axis=1)
 
-def generate_initial_beam(ray_count: int, start_pos: np.ndarray, incident_vec, scale=1):
-    points = sunflower(ray_count, alpha=0.7)
+def generate_initial_beam(ray_count: int, start_pos: np.ndarray, incident_vec: np.ndarray, scale):
+    points = scale*sunflower(ray_count, alpha=0.7)
     points_plane = np.column_stack((points, np.zeros((ray_count))))
     R = rotation_matrix_from_vectors(np.array((0, 0, 1)), incident_vec)
 
-    rotated_points = []
+    beam_points = []
     for point in points_plane:
-        rotated_points.append(np.array((np.matmul(R, point))))
+        rotated_point = np.array((np.matmul(R, point)))
+        beam_points.append(rotated_point + start_pos)
     
-    return np.array(rotated_points)
+    return np.array(beam_points)
+
+def reflect_beam_at_mirror(mirror: np.ndarray, mirror_norm: np.ndarray, beam, incident_vec: np.ndarray, receiver_pos: np.ndarray):
+    reflected_beam = []
+
+    for point in beam:
+        ray = [point]
+        mirror_point = line_plane_intersection(point, incident_vec, mirror, mirror_norm)
+        ray.append(mirror_point)
+
+        r1 = calculate_reflection(mirror_norm, incident_vec)
+        receiver_point = line_plane_intersection(mirror_point, r1, receiver_pos, np.array((0, 0, -1)))
+        ray.append(receiver_point)
+        reflected_beam.append(np.array(ray))
+
+    return np.array(reflected_beam)

@@ -61,10 +61,16 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
             'mirror_positions': np.array(mirror_positions)
             }
 
-def raytrace(model, beamwidth, beam_start_dist, raycasts=1):
+def raytrace(model, beamwidth, beam_start_dist, raycasts=100):
+    # TODO use beamwidth to modify scale
     recevier_pos = model['receiver_position']
     incident_vec = model['incident_vector']
+    mirror_norms = model['mirror_normals']
 
+    beams = []
     for i, mirror in enumerate(model['mirror_positions']):
         start_pos = mirror + beam_start_dist*-incident_vec
+        initial_beam = rt.generate_initial_beam(raycasts, start_pos, incident_vec, beamwidth)
+        beams.append(rt.reflect_beam_at_mirror(mirror, mirror_norms[i], initial_beam, incident_vec, recevier_pos))
         
+    return np.array(beams)

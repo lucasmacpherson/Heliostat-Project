@@ -49,3 +49,10 @@ def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.nd
     return np.array([vector_position[0] + vector_norm[0]*t, 
                      vector_position[1] + vector_norm[1]*t,
                      vector_position[2] + vector_norm[2]*t])
+
+def line_plane_intersection(point, vector, plane_point, plane_normal):
+    vector_norm = norm_vector(vector)
+    dist = np.dot(plane_point - point, plane_normal) / np.dot(vector_norm, plane_normal)
+    intersection_point = point + dist * vector_norm
+
+    return intersection_point

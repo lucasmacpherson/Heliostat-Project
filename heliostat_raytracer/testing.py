@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from raytracer import *
-from heliostat_raytracer import *
+from heliostat_field import *
 
 hstats = create_heliostat_field(2, [2, 2])
 receiver_pos = np.array([0, 0, 1])
