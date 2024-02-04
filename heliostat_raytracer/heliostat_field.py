@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
-import raytracer as rt
+from heliostat import *
 
 def create_heliostat_field(size, layout):
     """
@@ -32,9 +32,9 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
     mirror_positions = []
 
     for i, hstat in enumerate(hstats):
-        receiver_vec = rt.vector_to_receiver(hstat, receiver_pos)
-        init_mirror_norm = rt.calculate_mirror_normal(receiver_vec, incident_vec)
-        mirrors, offset_vecs = rt.calculate_mirror_positions(hstat, init_mirror_norm, receiver_vec, reflecting_width)
+        receiver_vec = vector_to_receiver(hstat, receiver_pos)
+        init_mirror_norm = calculate_mirror_normal(receiver_vec, incident_vec)
+        mirrors, offset_vecs = calculate_mirror_positions(hstat, init_mirror_norm, receiver_vec, reflecting_width)
 
         for j in range(2):
             idx = (2*i + j)
@@ -43,15 +43,15 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
                 tilt = 0
 
             elif isinstance(tilts, str) and tilts == 'ideal':
-                tilt = rt.calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, incident_vec)
+                tilt = calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, incident_vec)
                 print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
             
             else:
                 tilt = tilts[idx]
 
-            mirror_norm = rt.tilt_mirror_normal(init_mirror_norm, offset_vecs[j], tilt)
+            mirror_norm = tilt_mirror_normal(init_mirror_norm, offset_vecs[j], tilt)
             mirror_norms.append(mirror_norm)
-            reflected_vecs.append(rt.calculate_reflection(mirror_norm, incident_vec))
+            reflected_vecs.append(calculate_reflection(mirror_norm, incident_vec))
     
     return {'heliostat_positions': hstats,
             'receiver_position': receiver_pos,
@@ -61,16 +61,35 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
             'mirror_positions': np.array(mirror_positions)
             }
 
-def raytrace(model, beamwidth, beam_start_dist, raycasts=100):
-    # TODO use beamwidth to modify scale
+def create_geometry(model, receiver_size, mirror_size):
     recevier_pos = model['receiver_position']
     incident_vec = model['incident_vector']
     mirror_norms = model['mirror_normals']
+    mirrors = model['mirror_positions']
 
-    beams = []
-    for i, mirror in enumerate(model['mirror_positions']):
-        start_pos = mirror + beam_start_dist*-incident_vec
-        initial_beam = rt.generate_initial_beam(raycasts, start_pos, incident_vec, beamwidth)
-        beams.append(rt.reflect_beam_at_mirror(mirror, mirror_norms[i], initial_beam, incident_vec, recevier_pos))
-        
-    return np.array(beams)
+    # Rectangle represented by (centre pos, normal and (xsize, ysize))
+    rects = []
+    receiver_norm = np.array((0, 0, -1))
+    rects.append(np.array(recevier_pos, receiver_norm, receiver_size)) # target plane
+
+    # Circle represented by (center pos, normal and radius)
+    circs = []
+    for i, mirror in enumerate(mirrors):
+        circs.append(np.array(mirror, mirror_norms[i], mirror_size))
+
+    return {'rectangles': rects,
+            'circles': circs        
+    }
+
+def generate_uniform_beam(beam_size, raycasts, start_height):
+    """
+    Generate a square grid of evenly spaced identical initial beam points
+
+    returns np.array(x, y, z, direction_vector)
+    """
+    x, y =  np.meshgrid(
+        np.linspace(-beam_size/2, beam_size/2, int(np.sqrt(raycasts)), endpoint=True),
+        np.linspace(-beam_size/2, beam_size/2, int(np.sqrt(raycasts)), endpoint=True)
+    )
+
+    return np.column_stack((x.ravel(), y.ravel(), np.full(raycasts, start_height)))

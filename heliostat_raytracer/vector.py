@@ -12,6 +12,9 @@ def norm_vector(vector: np.ndarray):
     """
     return vector / np.sqrt(vector.dot(vector))
 
+def distance(vec1: np.ndarray, vec2: np.ndarray):
+    return magnitude(vec2 - vec1)
+
 def calculate_rotation_matrix(u: np.ndarray, theta):
     # Source: https://stackoverflow.com/questions/17763655/rotation-of-a-point-in-3d-about-an-arbitrary-axis-using-python
     stheta = np.sin(theta)
@@ -38,21 +41,17 @@ def rotation_matrix_from_vectors(vec1, vec2):
     kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
     rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
     return rotation_matrix
-    
-def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.ndarray, plane_norm: np.ndarray, plane_offset):
-    # Source: https://stackoverflow.com/questions/26920705/ray-plane-intersection
+
+def vector_plane_distance(vector_norm: np.ndarray, vector_position: np.ndarray, plane_norm: np.ndarray, plane_offset):
     s = plane_norm.dot(vector_norm)
     if s == 0: 
         return None
     
-    t = (plane_offset-(plane_norm.dot(vector_position)))/s
-    return np.array([vector_position[0] + vector_norm[0]*t, 
-                     vector_position[1] + vector_norm[1]*t,
-                     vector_position[2] + vector_norm[2]*t])
+    return (plane_offset-(plane_norm.dot(vector_position)))/s
 
-def line_plane_intersection(point, vector, plane_point, plane_normal):
-    vector_norm = norm_vector(vector)
-    dist = np.dot(plane_point - point, plane_normal) / np.dot(vector_norm, plane_normal)
-    intersection_point = point + dist * vector_norm
-
-    return intersection_point
+def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.ndarray, plane_norm: np.ndarray, plane_offset):
+    # Source: https://stackoverflow.com/questions/26920705/ray-plane-intersection
+    d = vector_plane_distance(vector_norm, vector_position, plane_norm, plane_offset)
+    return np.array([vector_position[0] + vector_norm[0]*d, 
+                     vector_position[1] + vector_norm[1]*d,
+                     vector_position[2] + vector_norm[2]*d])

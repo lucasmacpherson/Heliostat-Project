@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-from raytracer import *
+from heliostat import *
 from heliostat_field import *
 
 hstats = create_heliostat_field(2, [2, 2])

@@ -2,113 +2,26 @@ import numpy as np
 
 from vector import *
 
-def vector_to_receiver(hstat, recevier):
-    """
-    Calculate the normalised direction vector pointing torwards receiver
-    """
-    return np.array(norm_vector(recevier - hstat))
-
-def calculate_mirror_normal(receiver_vec, incident_vec):
-    """
-    Calculate the mirror normal vector required for reflection of incident rays to the target
-    """
-    xproduct = np.cross(-incident_vec, receiver_vec)
-    theta = np.arcsin(magnitude(xproduct))
-    if magnitude(xproduct != 0):
-        R = calculate_rotation_matrix(xproduct/magnitude(xproduct), theta/2)
+def intersect_circle(ray, circ):
+    intersect = calculate_plane_intersection(ray[1], ray[0], circ[1], circ[0])
+    dist = distance(intersect, circ[0])
+    if dist <= circ[2]:
+        return intersect
     else:
-        R = calculate_rotation_matrix(xproduct, theta/2)
+        return None
+    
+def intersect_rectangle(ray, rect):
+    intersect = calculate_plane_intersection(ray[1], ray[0], rect[1], rect[0])
+    R = rotation_matrix_from_vectors(rect[1], np.array((0, 0, 1)))
+    point = np.matmul(R, intersect)
+
+def raytrace(model, beam_points, geometry):
+    recevier_pos = model['receiver_position']
+    incident_vec = model['incident_vector']
+    mirror_norms = model['mirror_normals']
+
+    rays = [] # Each ray is an array of (point, direction)
+    for point in beam_points:
+        continue
         
-    if theta != 0:
-        return np.array(np.matmul(R, -incident_vec))
-    else:
-        return -incident_vec
-
-def calculate_reflection(mirror_norm, incident_vec):
-    """
-    Calculate the normalised direction vector of the reflected ray
-    """
-    return norm_vector(np.array(incident_vec - 2*mirror_norm.dot(incident_vec.dot(mirror_norm))))
-
-def calculate_mirror_positions(hstat, mirror_normal, receiver_vec, reflecting_width):
-    """
-    Calculate the positions of the 2 heliostat mirrors, seperated from the central
-    position by a distance of reflecting_width/4.
-
-    Function returns a tuple of (mirror_positions, offset_vectors)
-    """
-    step = reflecting_width/2
-    xproduct = norm_vector(np.cross(mirror_normal, receiver_vec))
-    return (np.array([hstat - step*xproduct, hstat + step*xproduct]),
-            np.array([-xproduct, xproduct]))
-
-def calculate_target_intersection(reflected_vec, mirror, receiver_pos):
-    """
-    Calculate the intersection point of the reflected ray and the target plane
-    """
-    plane_normal = np.array([0, 0, 1])
-    plane_offset = receiver_pos[2]
-
-    return calculate_plane_intersection(reflected_vec, mirror, plane_normal, plane_offset)
-
-def calculate_ideal_tilt(mirror_position, receiver_pos, mirror_norm, incident_vec):
-    receiver_vec = vector_to_receiver(mirror_position, receiver_pos)
-    initial_reflect = calculate_reflection(mirror_norm, incident_vec)
-    dproduct = np.dot(initial_reflect, receiver_vec)
-    tilt = -np.arccos(dproduct) / 2
-    
-    return tilt
-
-def tilt_mirror_normal(mirror_normal, offset_vec, tilt):
-    xproduct = norm_vector(np.cross(mirror_normal, offset_vec))
-    R = calculate_rotation_matrix(xproduct, tilt)
-    return np.matmul(R, mirror_normal)
-
-# Credit: https://stackoverflow.com/a/72226595
-def sunflower(n: int, alpha: float) -> np.ndarray:
-    # Number of points respectively on the boundary and inside the cirlce.
-    n_exterior = np.round(alpha * np.sqrt(n)).astype(int)
-    n_interior = n - n_exterior
-
-    # Ensure there are still some points in the inside...
-    if n_interior < 1:
-        raise RuntimeError(f"Parameter 'alpha' is too large ({alpha}), all "
-                           f"points would end-up on the boundary.")
-    # Generate the angles. The factor k_theta corresponds to 2*pi/phi^2.
-    k_theta = np.pi * (3 - np.sqrt(5))
-    angles = np.linspace(k_theta, k_theta * n, n)
-
-    # Generate the radii.
-    r_interior = np.sqrt(np.linspace(0, 1, n_interior))
-    r_exterior = np.ones((n_exterior,))
-    r = np.concatenate((r_interior, r_exterior))
-    
-    # Return Cartesian coordinates from polar ones.
-    return r.reshape(n, 1) * np.stack((np.cos(angles), np.sin(angles)), axis=1)
-
-def generate_initial_beam(ray_count: int, start_pos: np.ndarray, incident_vec: np.ndarray, scale):
-    points = scale*sunflower(ray_count, alpha=0.7)
-    points_plane = np.column_stack((points, np.zeros((ray_count))))
-    R = rotation_matrix_from_vectors(np.array((0, 0, 1)), incident_vec)
-
-    beam_points = []
-    for point in points_plane:
-        rotated_point = np.array((np.matmul(R, point)))
-        beam_points.append(rotated_point + start_pos)
-    
-    return np.array(beam_points)
-
-def reflect_beam_at_mirror(mirror: np.ndarray, mirror_norm: np.ndarray, beam, incident_vec: np.ndarray, receiver_pos: np.ndarray):
-    reflected_beam = []
-
-    for point in beam:
-        ray = [point]
-        mirror_point = line_plane_intersection(point, incident_vec, mirror, mirror_norm)
-        ray.append(mirror_point)
-
-        r1 = calculate_reflection(mirror_norm, incident_vec)
-        receiver_point = line_plane_intersection(mirror_point, r1, receiver_pos, np.array((0, 0, -1)))
-        ray.append(receiver_point)
-        reflected_beam.append(np.array(ray))
-
-    return np.array(reflected_beam)
+    return np.array(rays)

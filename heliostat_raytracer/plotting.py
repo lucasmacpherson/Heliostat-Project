@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-import raytracer as rt
+import heliostat as rt
 
 def heliostat_field_figure(model, scale=1):
     fig = plt.figure()
