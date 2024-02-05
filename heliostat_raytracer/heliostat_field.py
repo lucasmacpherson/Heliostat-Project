@@ -63,23 +63,24 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
 
 def create_geometry(model, receiver_size, mirror_size):
     recevier_pos = model['receiver_position']
-    incident_vec = model['incident_vector']
     mirror_norms = model['mirror_normals']
     mirrors = model['mirror_positions']
 
     # Rectangle represented by (centre pos, normal and (xsize, ysize))
     rects = []
     receiver_norm = np.array((0, 0, -1))
-    rects.append(np.array(recevier_pos, receiver_norm, receiver_size)) # target plane
+    rects.append((recevier_pos, receiver_norm, receiver_size)) # target plane
 
     # Circle represented by (center pos, normal and radius)
     circs = []
     for i, mirror in enumerate(mirrors):
-        circs.append(np.array(mirror, mirror_norms[i], mirror_size))
+        circs.append((mirror, mirror_norms[i], mirror_size))
 
-    return {'rectangles': rects,
+    model['geometry'] = {
+            'rectangles': rects,
             'circles': circs        
     }
+    return model
 
 def generate_uniform_beam(beam_size, raycasts, start_height):
     """

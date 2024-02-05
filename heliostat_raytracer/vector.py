@@ -38,6 +38,8 @@ def rotation_matrix_from_vectors(vec1, vec2):
     v = np.cross(a, b)
     c = np.dot(a, b)
     s = np.linalg.norm(v)
+    if s.all() == 0:
+        return np.eye(3)
     kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
     rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
     return rotation_matrix
