@@ -113,7 +113,7 @@ def show_system(model):
 
     for ray in model['rays']:
         points = np.array([ray[i][0] for i in range(len(ray))])
-        ax.plot(points[:, 0], points[:, 1], points[:, 2], color='blue')
+        ax.plot(points[:, 0], points[:, 1], points[:, 2], color='blue', alpha=0.05)
 
     return fig, ax
 

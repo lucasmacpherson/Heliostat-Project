@@ -45,7 +45,7 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
 
             elif isinstance(tilts, str) and tilts == 'ideal':
                 tilt = calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, incident_vec)
-                print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
+                # print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
             
             else:
                 tilt = tilts[idx]
@@ -71,9 +71,6 @@ def create_geometry(model, receiver_size, mirror_size, ylim=(-1, 2)):
     rects = []
     receiver_norm = np.array((0, 0, -1))
     rects.append((recevier_pos, receiver_norm, receiver_size)) # target plane
-    # Bounds
-    # rects.append((np.array((0, 0, -1.1)), np.array((0, 0, 1)), (np.array((10, 10)))))
-    # rects.append((np.array((0, 0, 2.1)), np.array((0, 0, -1)), (np.array((10, 10)))))
 
     # Circle represented by (center pos, normal and radius)
     circs = []
@@ -92,3 +89,11 @@ def raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_h
     rays = run_raytracer(model, initial_rays)
     model['rays'] = rays
     return model
+
+def mphelper_efficiency(hstats, incident_vec, receiver_pos, reflecting_width, receiver_size, mirror_size, beam_size, raycasts, start_height, tilts=None, ylim=(-1, 2)):
+    model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts='ideal')
+    model = create_geometry(model, receiver_size, mirror_size, ylim)
+    model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+    model = prune_rays(model)
+
+    return len(model['rays'])/raycasts
