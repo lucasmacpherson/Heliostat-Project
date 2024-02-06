@@ -3,6 +3,7 @@ import numpy as np
 
 import heliostat as hst
 from vector import *
+from raytracer import *
 
 def heliostat_field_figure(model, scale=1):
     fig = plt.figure()
@@ -100,6 +101,7 @@ def get_circle_surface(circ):
 def show_system(model):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+    model = prune_rays(model)
 
     for rect in model['geometry']['rectangles']:
         surf = get_rectangle_surface(rect)
@@ -109,4 +111,21 @@ def show_system(model):
         surf = get_circle_surface(circ)
         ax.plot_trisurf(surf[:, 0], surf[:, 1], surf[:, 2], linewidth=0, color='blue')
 
+    for ray in model['rays']:
+        points = np.array([ray[i][0] for i in range(len(ray))])
+        ax.plot(points[:, 0], points[:, 1], points[:, 2], color='blue')
+
+    return fig, ax
+
+def show_target_plane(model):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    model = prune_rays(model)
+
+    points = []
+    for ray in model['rays']:
+        points.append(np.array(ray[-1][0]))
+    points = np.array(points)
+
+    ax.scatter(points[:, 0], points[:, 1], marker='o', color='blue')
     return fig, ax

@@ -45,15 +45,18 @@ def rotation_matrix_from_vectors(vec1, vec2):
     return rotation_matrix
 
 def vector_plane_distance(vector_norm: np.ndarray, vector_position: np.ndarray, plane_norm: np.ndarray, plane_offset):
-    s = plane_norm.dot(vector_norm)
+    s = vector_norm.dot(plane_norm)
     if s == 0: 
         return None
     
-    return (plane_offset-(plane_norm.dot(vector_position)))/s
+    u = plane_offset - vector_position
+    return u.dot(plane_norm) / s
 
-def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.ndarray, plane_norm: np.ndarray, plane_offset):
-    # Source: https://stackoverflow.com/questions/26920705/ray-plane-intersection
+def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.ndarray, plane_norm: np.ndarray, plane_offset, epsilon=1e-9):
     d = vector_plane_distance(vector_norm, vector_position, plane_norm, plane_offset)
+    if d is None or abs(d) < epsilon:
+        return None
+    
     return np.array([vector_position[0] + vector_norm[0]*d, 
                      vector_position[1] + vector_norm[1]*d,
                      vector_position[2] + vector_norm[2]*d])
