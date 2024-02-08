@@ -29,6 +29,7 @@ if __name__ == "__main__":
     start_height = 0.25
 
     incident_x = np.arange(0.05, 8.0, 0.25)
+    incident_x = np.arange(0.05, 10.0, 0.25)
     incident_angles = []
     args = []
 
