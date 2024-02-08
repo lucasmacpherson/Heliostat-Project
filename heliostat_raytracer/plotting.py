@@ -123,7 +123,7 @@ def show_target_plane(model):
     model = prune_rays(model)
 
     points = []
-    for ray in model['rays']:
+    for ray in get_rays_at_target(model):
         points.append(np.array(ray[-1][0]))
     points = np.array(points)
 

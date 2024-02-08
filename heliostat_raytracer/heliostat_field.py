@@ -90,10 +90,15 @@ def raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_h
     model['rays'] = rays
     return model
 
+def calculate_collection_fraction(model):
+    raycasts = len(model['rays'])
+    tgt_plane_rays = get_rays_at_target(model)
+    return len(tgt_plane_rays) / raycasts
+
 def mphelper_efficiency(hstats, incident_vec, receiver_pos, reflecting_width, receiver_size, mirror_size, beam_size, raycasts, start_height, tilts=None, ylim=(-1, 2)):
     model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts='ideal')
     model = create_geometry(model, receiver_size, mirror_size, ylim)
     model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
     model = prune_rays(model)
 
-    return len(model['rays'])/raycasts
+    return calculate_collection_fraction(model)

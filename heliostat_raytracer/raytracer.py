@@ -120,3 +120,18 @@ def prune_rays(model):
 
     model['rays'] = rays
     return model
+
+def get_rays_at_target(model):
+    rays = []
+    receiver_pos = model['receiver_position']
+    
+    for ray in model['rays']:
+        if len(ray) == 1:
+            continue
+
+        if ray[-1][0][2] != receiver_pos[2]:
+            continue
+
+        rays.append(ray)
+
+    return rays

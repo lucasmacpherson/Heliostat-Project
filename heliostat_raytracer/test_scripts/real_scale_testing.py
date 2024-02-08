@@ -18,7 +18,7 @@ ylim = (-1, 2)
 # located 20.3cm 
 
 hstats = create_heliostat_field(2*hstat_sep, [2, 2])
-incident_vec = norm_vector(np.array([-2.5, 0, -1]))
+incident_vec = norm_vector(np.array([-1, 0, -1]))
 incident_angle = np.pi - np.arcsin(incident_vec.dot(np.array((0, 0, 1)))) * 180/np.pi
 
 """tilts = [
@@ -27,9 +27,10 @@ incident_angle = np.pi - np.arcsin(incident_vec.dot(np.array((0, 0, 1)))) * 180/
     -0.1, -0.1,
     -0.1, -0.1
 ]"""
-tilts = np.array([-0.17]).repeat(2*len(hstats))
+tilt_deg = 10
+tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=heliostat_width, tilts=tilts)
+model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width=heliostat_width, tilts='ideal')
 model = create_geometry(model, receiver_size, mirror_size, ylim)
 """ 
 fig, ax = heliostat_field_figure(model, scale=0.3)
@@ -38,12 +39,12 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 500**2
-beam_size = 4.0
-start_height = 0.5
+raycasts = 300**2
+beam_size = 5.0
+start_height = 0.2
 
 model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
-efficiency = len(prune_rays(model)['rays']) / raycasts
+efficiency = calculate_collection_fraction(model)
 print(f"Incident angle: {incident_angle} had collection efficiency {efficiency*100}%")
 
 fig, ax = show_system(model)
