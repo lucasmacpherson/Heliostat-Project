@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+from enum import Enum
 
 from heliostat import *
 from raytracer import *
@@ -9,6 +10,7 @@ def create_heliostat_field(size, layout):
     Generate the heliostat field as an array of vector positions, based on the provided
     layout. Scale provided is the width of the rectangular array.
     """
+    layout = np.array(layout)
     heliostats = []
     try:
         xstep = size / (layout[1] - 1)
@@ -28,6 +30,7 @@ def create_heliostat_field(size, layout):
     return heliostats
 
 def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=None):
+    receiver_pos = np.array(receiver_pos)
     mirror_norms = []
     reflected_vecs = []
     mirror_positions = []
@@ -102,3 +105,12 @@ def mphelper_efficiency(hstats, incident_vec, receiver_pos, reflecting_width, re
     model = prune_rays(model)
 
     return calculate_collection_fraction(model)
+
+class experimental_params(Enum):
+    # All values given in metres
+    HELIOSTAT_SEPERATION = 0.452
+    HELIOSTAT_WIDTH = 0.57
+    MIRROR_RADIUS = 0.013
+    RECEIVER_POSITION = (0.365, 0, 0.585)
+    RECEIVER_SIZE = (0.23, 0.28)
+    YLIM = (-1, 2)
