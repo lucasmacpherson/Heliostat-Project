@@ -4,6 +4,8 @@ from enum import Enum
 
 from heliostat import *
 from raytracer import *
+from images import target_image_points
+from experimental_params import experimental_params as exp
 
 def create_heliostat_field(size, layout):
     """
@@ -106,11 +108,14 @@ def mphelper_efficiency(hstats, incident_vec, receiver_pos, reflecting_width, re
 
     return calculate_collection_fraction(model)
 
-class experimental_params(Enum):
-    # All values given in metres
-    HELIOSTAT_SEPERATION = 0.452
-    HELIOSTAT_WIDTH = 0.57
-    MIRROR_RADIUS = 0.013
-    RECEIVER_POSITION = (-0.365, 0, 0.585)
-    RECEIVER_SIZE = (0.23, 0.28)
-    YLIM = (-1, 2)
+def mphelper_efficiency_imagegen(hstats, incident_vec, receiver_pos, reflecting_width, receiver_size, mirror_size, beam_size, raycasts, start_height, tilts=None, ylim=(-1, 2), fname=''):
+    model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=tilts)
+    model = create_geometry(model, receiver_size, mirror_size, ylim)
+    model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+    model = prune_rays(model)
+
+    if fname != '':
+        img = target_image_points(exp.CAMERA_IMAGESIZE.value, model, pointsize=4)
+        img.save(fname)
+
+    return calculate_collection_fraction(model)

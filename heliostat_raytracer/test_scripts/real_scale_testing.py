@@ -7,11 +7,13 @@ sys.path.append(parent_dir)
 
 from heliostat_field import *
 from plotting import *
+from images import *
 
-from heliostat_field import experimental_params as exp
+from experimental_params import experimental_params as exp
 
-hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
-azimuth = 60
+# hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
+hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
+azimuth = 0
 elevation = 45 # Limit seems to be at 32deg
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_elevation_azimuth(azimuth, elevation)
@@ -35,7 +37,7 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 300**2
+raycasts = 500**2
 beam_size = 2.0
 start_height = 0.2
 
@@ -51,3 +53,6 @@ plt.show()
 
 fig, ax = show_target_plane(model)
 plt.show()
+
+img = target_image_points(exp.CAMERA_IMAGESIZE.value, model, 2)
+img.save("data/output_test.png")
