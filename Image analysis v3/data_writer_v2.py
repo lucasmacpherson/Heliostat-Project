@@ -1,8 +1,9 @@
 from edge_detector_v3 import *
 
 # data set 1 variables
-# degrees = [15,25,35,45,55,65]
-# location = "Images 15_12/"
+# degrees = [5,15,25,35,45,55,65]
+# degrees = [45]
+# location = "Image analysis v3/Images 15_12/"
 # image_labels = [1,2,3,4,5,6]
 # date = "15_12"
 # xy_range = [[60, 1024], [0, 1280]] # in order y, x
@@ -11,7 +12,7 @@ from edge_detector_v3 import *
 
 # data set 2 variables
 degrees = [5,15,25,35,45,55]
-location = "Images 23_1/"
+location = "Image analysis v3/Images 23_1/"
 image_labels = [1,2,3,4,5]
 date = "23_1"
 xy_range = [[90, 1024], [0, 1280]] # in order y, x
@@ -41,10 +42,12 @@ for deg in degrees:
         imgtitle = date + " data/figs/" + str(deg) + " " + str(num) + ".png"
         
         image, background = trim(img, back, xy_range[0], xy_range[1])
+        image = np.array(image, dtype=np.int16)
+        background = np.array(background, dtype=np.int16)
 
         removed = np.array(image) - np.array(background)
 
-        binary = gen_binary(removed, title, imgtitle, threshold=10)
+        binary = gen_binary(removed, imgtitle, threshold=10)
 
         data = obj_data_extractor(binary, image)
 
@@ -55,9 +58,9 @@ for deg in degrees:
 
         header = "areas, intensities, x, y"
 
-        #np.savetxt(title, data, header = header, delimiter = ",")
+        np.savetxt(title, data, header = header, delimiter = ",")
 
     np.savetxt((title[:-6] + " distances.csv"), distances, delimiter = ",")
     np.savetxt((title[:-6] + " w distances.csv"), w_distances, delimiter = ",")
 
-
+ 

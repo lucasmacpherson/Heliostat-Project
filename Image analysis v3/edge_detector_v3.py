@@ -25,7 +25,7 @@ def trim(img, background, y_range, x_range, back_given = True):
     
     return image, b_image
 
-def gen_binary(image, title: str, imgtitle, savefig = True, savedata = True, threshold = 10): 
+def gen_binary(image, imgtitle, savefig = True, threshold = 10): 
     """generates and saves binary version of image, 1 for object 0 for background"""
 
     dim = np.shape(image)
@@ -44,14 +44,11 @@ def gen_binary(image, title: str, imgtitle, savefig = True, savedata = True, thr
 
     if savefig: 
         plt.figure()
-        plt.title(title)
+        plt.title(imgtitle[-8:-4])
         plt.imshow(closed)
         plt.savefig(imgtitle)
         #plt.show()
         plt.close()
-
-    if savedata:
-        np.savetxt(title, closed, fmt='%i')
 
     return closed
 

@@ -19,10 +19,11 @@ def plot_area_by_degree(header, degrees, iterations, avg_per_image = False, avg_
                 col = colours[num-1]
 
                 areas = data.T[0]
+                print(areas)
                 
                 if not avg_per_image:
                     for a in areas:
-                            plt.scatter(deg, a, color = col, label = num)
+                             plt.scatter(deg, a, color = col, label = num)
                 
                 elif avg_per_image:
                     print(areas)
@@ -375,35 +376,30 @@ def weighted_pixel_dist(header, degrees, iterations, target_loc):
 #data set 1 variables
 degrees = [5,15,25,35,45,55,65]
 iterations = 6
-header = "15_12 data/locs/"
+header = "Image analysis v3/15_12 data/locs/"
 target_loc = [644, 566]  
 
 #data set 2 variables
 # degrees = [5,15,25,35,45,55]
 # iterations = 5
-# header = "23_1 data/locs/"
+# header = "Image analysis v3/23_1 data/locs/"
 # target_loc = [616, 571]
 
 colours = ["red", "orange", "yellow", "green", "blue", "purple"]
+#x = np.array([57.5, 52.5, 47.5, 42.5, 37.5, 32.5, 27.5])
+x = np.array([64.5, 59.5, 54.5, 49.5, 44.5, 39.5, 34.5])
+y = np.cos(x*(np.pi/180))
 
-
-
-plot_area_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
-
-x = np.array([57.5, 52.5, 47.5, 42.5, 37.5, 32.5, 27.5])
-# xsmooth = np.linspace(x[0]*(np.pi/180), x[-1]*(np.pi/180), 60)
-# ysmooth = np.cos(xsmooth) * 16000
-y = np.cos(x*(np.pi/180)) * 15000
-plt.plot(degrees, y) 
-#plt.savefig("23_1 data/Area by image 23_1.png")
-plt.show()
-
-# plot_intensity_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
-# x = np.linspace(np.min(degrees), np.max(degrees), 50)
-# y = 4500 * np.cos((90 - np.array(x)) * (np.pi/180))
-# #plt.plot(x, y)
-# #plt.savefig("23_1 data/Total intensity by image 23_1 w fit.png")
+# plot_area_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
+# plt.plot(degrees, y*18000)  
+# #plt.savefig("23_1 data/Area by image 23_1.png")
+# #plt.savefig("15_12 data/Area by image 15_12.png")
 # plt.show()
+
+plot_intensity_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
+plt.plot(degrees, y*240000)
+#plt.savefig("23_1 data/Total intensity by image 23_1 w fit.png")
+plt.show()
 
 # plot_average_intensity(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
 # #plt.ylim(0,2)
