@@ -112,10 +112,11 @@ def mphelper_efficiency_imagegen(hstats, incident_vec, receiver_pos, reflecting_
     model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=tilts)
     model = create_geometry(model, receiver_size, mirror_size, ylim)
     model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+    collection_frac = calculate_collection_fraction(model)
+    
     model = prune_rays(model)
-
     if fname != '':
-        img = target_image_points(exp.CAMERA_IMAGESIZE.value, model, pointsize=4)
+        img = target_image_points(exp.CAMERA_IMAGESIZE.value, model, pointsize=2)
         img.save(fname)
 
-    return calculate_collection_fraction(model)
+    return collection_frac
