@@ -31,22 +31,25 @@ if __name__ == "__main__":
     start_height = 0.25
 
     # Incident ray only in -x direction (-x, 0, -1)
-    elevations = np.arange(10, 80, 5)
-    
-    incident_x = np.cos(incident_x_angles*np.pi/180)
-    args = []
+    # elevations = np.arange(10, 80, 5)
+    elevations = np.array((35, 45))
+    azimuths = np.arange(-70, 70, 10)
 
-    for i, x in enumerate(incident_x):
-        incident_vec = norm_vector(np.array((x, 0, -1)))
-        args.append([hstats, incident_vec, receiver_pos, heliostat_width, receiver_size, 
-                    mirror_size, beam_size, raycasts, start_height, tilts, (-1, 2)])
 
-    with mp.Pool(worker_threads) as pool:
-        efficiency_results = pool.starmap(mphelper_efficiency, args)
+    for i, elevation in enumerate(elevations):
+        args = []
 
-    efficiencies = []
-    for result in efficiency_results:
-        efficiencies.append(result)
+        for i, azimuth in enumerate(azimuths):
+            incident_vec = -1*vector_from_elevation_azimuth(azimuth, elevation)
+            args.append([hstats, incident_vec, receiver_pos, heliostat_width, receiver_size, 
+                        mirror_size, beam_size, raycasts, start_height, tilts, (-1, 2)])
 
-    np.savetxt('data/efficiencies_1M_last.csv', np.column_stack((incident_x, np.array(incident_x_angles), np.array(efficiencies))), delimiter=',')
+        with mp.Pool(worker_threads) as pool:
+            efficiency_results = pool.starmap(mphelper_efficiency, args)
+
+        efficiencies = []
+        for result in efficiency_results:
+            efficiencies.append(result)
+
+        np.savetxt(f'data/{elevation}_4M_efficiencies.csv', np.column_stack((azimuths, np.array(efficiencies))), delimiter=',')
 

@@ -11,7 +11,7 @@ from plotting import *
 from heliostat_field import experimental_params as exp
 
 hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
-azimuth = 45
+azimuth = 60
 elevation = 45 # Limit seems to be at 32deg
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_elevation_azimuth(azimuth, elevation)
