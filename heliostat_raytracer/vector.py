@@ -60,3 +60,21 @@ def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.nd
     return np.array([vector_position[0] + vector_norm[0]*d, 
                      vector_position[1] + vector_norm[1]*d,
                      vector_position[2] + vector_norm[2]*d])
+
+def vector_from_elevation_azimuth(alpha, beta):
+    # Convert degree to radians
+    alpha, beta = alpha*np.pi/180, beta*np.pi/180
+
+    f = np.array((1, 0, 0))
+
+    # rotate f by alpha about the normal to the plane
+    plane_normal = np.array((0, 0, 1))
+    R = calculate_rotation_matrix(plane_normal, alpha)
+    f = np.matmul(R, f)
+
+    # elevate f by beta
+    u = np.cross(f, plane_normal)
+    R = calculate_rotation_matrix(u, beta)
+    f = np.matmul(R, f)
+
+    return f

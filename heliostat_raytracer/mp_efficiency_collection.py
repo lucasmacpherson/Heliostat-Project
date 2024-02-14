@@ -17,29 +17,31 @@ ylim = (-1, 2)
 
 # System parameters
 hstat_layout = [2, 2]
-tilt_deg = 10
+tilt_deg = -10
+
+worker_threads = 16
 
 if __name__ == "__main__":
     mp.freeze_support()
     hstats = create_heliostat_field(hstat_sep, hstat_layout)
     tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-    raycasts = 1000**2
-    beam_size = 5.0
+    raycasts = 2000**2
+    beam_size = 2.5
     start_height = 0.25
 
     # Incident ray only in -x direction (-x, 0, -1)
-    incident_x = np.arange(0.05, 8.0, 1)
-    incident_x_angles = np.arange(10, 90, 5)
+    elevations = np.arange(10, 80, 5)
+    
     incident_x = np.cos(incident_x_angles*np.pi/180)
     args = []
 
     for i, x in enumerate(incident_x):
         incident_vec = norm_vector(np.array((x, 0, -1)))
         args.append([hstats, incident_vec, receiver_pos, heliostat_width, receiver_size, 
-                    mirror_size, beam_size, raycasts, start_height, 'ideal', (-1, 2)])
+                    mirror_size, beam_size, raycasts, start_height, tilts, (-1, 2)])
 
-    with mp.Pool() as pool:
+    with mp.Pool(worker_threads) as pool:
         efficiency_results = pool.starmap(mphelper_efficiency, args)
 
     efficiencies = []

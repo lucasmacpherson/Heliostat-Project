@@ -48,7 +48,7 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
 
             elif isinstance(tilts, str) and tilts == 'ideal':
                 tilt = calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, incident_vec)
-                # print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
+                print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
             
             else:
                 tilt = tilts[idx]
@@ -111,6 +111,6 @@ class experimental_params(Enum):
     HELIOSTAT_SEPERATION = 0.452
     HELIOSTAT_WIDTH = 0.57
     MIRROR_RADIUS = 0.013
-    RECEIVER_POSITION = (0.365, 0, 0.585)
+    RECEIVER_POSITION = (-0.365, 0, 0.585)
     RECEIVER_SIZE = (0.23, 0.28)
     YLIM = (-1, 2)

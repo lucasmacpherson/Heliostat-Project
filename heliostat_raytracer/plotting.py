@@ -121,10 +121,11 @@ def show_target_plane(model):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     model = prune_rays(model)
+    receiver_pos = model['receiver_position']
 
     points = []
     for ray in get_rays_at_target(model):
-        points.append(np.array(ray[-1][0]))
+        points.append(np.array(ray[-1][0]) - receiver_pos)
     points = np.array(points)
 
     ax.scatter(points[:, 0], points[:, 1], marker='o', color='blue')
