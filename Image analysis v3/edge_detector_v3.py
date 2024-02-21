@@ -120,15 +120,15 @@ def obj_data_extractor(data, og_image: str): #background already removed!
 
     return info.T
 
-def avg_background(name, num_backs):
+def avg_background(name, num_backs, file_type):
 
-    title = name + ".jpg"
+    title = name + file_type
     img_1 = im.imread(title)
     total = np.array(img_1.copy())
     used = 0
 
     for i in range(1, num_backs):
-        title = name + "_" + str(i) + ".jpg"
+        title = name + "_" + str(i) + file_type
 
         try:
             img = np.array(im.imread(title))

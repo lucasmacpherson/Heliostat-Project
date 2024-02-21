@@ -39,7 +39,7 @@ def plot_area_by_degree(header, degrees, iterations, avg_per_image = False, avg_
                 location = header + str(deg) + " " + str(num) + ".csv"
                 data = np.loadtxt(location, delimiter = ",")
 
-                areas = data[0]
+                areas = data.T[0]
                 avg_areas = np.mean(areas)
                 avg_a.append(avg_areas)
                 
@@ -67,8 +67,8 @@ def plot_intensity_by_degree(header, degrees, iterations, avg_per_image = False,
 
                 col = colours[num-1]
 
-                intensity = data[1]
-                
+                intensity = data.T[1]
+
                 if not avg_per_image:
                     for i in intensity:
                             plt.scatter(deg, i, color = col, label = num)
@@ -84,7 +84,7 @@ def plot_intensity_by_degree(header, degrees, iterations, avg_per_image = False,
                 location = header + str(deg) + " " + str(num) + ".csv"
                 data = np.loadtxt(location, delimiter = ",")
 
-                intensity = data[1]
+                intensity = data.T[1]
                 avg_intens = np.mean(intensity)
                 avg_i.append(avg_intens)
                 
@@ -113,8 +113,8 @@ def plot_average_intensity(header, degrees, iterations, avg_per_image = False, a
 
                 col = colours[num-1]
 
-                intensity = data[1]
-                areas = data[0]
+                intensity = data.T[1]
+                areas = data.T[0]
                 
                 if not avg_per_image:
                     for i in range(0, len(intensity)):
@@ -133,8 +133,8 @@ def plot_average_intensity(header, degrees, iterations, avg_per_image = False, a
                 location = header + str(deg) + " " + str(num) + ".csv"
                 data = np.loadtxt(location, delimiter = ",")
 
-                intensity = data[1]
-                areas = data[0]
+                intensity = data.T[1]
+                areas = data.T[0]
                 avg_intens = np.mean(intensity)
                 avg_areas = np.mean(areas)
                 avg_i.append(avg_intens/avg_areas)
@@ -166,7 +166,7 @@ def x_y_std(header, degree, iterations, decimals = 2):
         data = np.loadtxt(location, delimiter = ",")
         data = data.T
 
-        objects.append(len(data[2]))
+        objects.append(len(data.T[2]))
 
     number_found = np.median(objects) #Finds the median number of objects
 
@@ -175,7 +175,7 @@ def x_y_std(header, degree, iterations, decimals = 2):
         data = np.loadtxt(location, delimiter = ",")
         data = data.T
 
-        if len(data[2]) == number_found and len(data[3]) == number_found: 
+        if len(data.T[2]) == number_found and len(data.T[3]) == number_found: 
             valid_indexes.append(num) #Identifies which images deviate from median number of objects
 
     # print(f"This many images can be used: {len(valid_indexes)}; {int(number_found)} objects")
@@ -200,8 +200,8 @@ def x_y_std(header, degree, iterations, decimals = 2):
             location = full_header + str(num) + ".csv"
             data = np.loadtxt(location, delimiter = ",")
 
-            x_coords = data[2]
-            y_coords = data[3]
+            x_coords = data.T[2]
+            y_coords = data.T[3]
             dist = []
 
             for j in range(0, int(number_found)):
@@ -332,7 +332,6 @@ def plot_dist_from_target(header, degrees, iterations, target_loc, by_degree = T
     plt.ylabel("Distance in pixels")
     #plt.show()
     
-
 def pixel_dist_from_target(header, degrees, iterations, target_loc):
 
     fig5 = plt.figure()
@@ -385,37 +384,48 @@ target_loc = [644, 566]
 # header = "Image analysis v3/23_1 data/locs/"
 # target_loc = [616, 571]
 
+
+#x for 1 and 2
+#x = np.array([64.5, 59.5, 54.5, 49.5, 44.5, 39.5, 34.5])
+#y = np.cos(x*(np.pi/180))
+
+#data set 3 variables
+degrees = [-60, -40, -20, 0, 20, 40, 60]
+iterations = 2
+header = "Image analysis v3/13_2 data/locs/"
+target_loc = [594, 560]
+
+
 colours = ["red", "orange", "yellow", "green", "blue", "purple"]
-#x = np.array([57.5, 52.5, 47.5, 42.5, 37.5, 32.5, 27.5])
-x = np.array([64.5, 59.5, 54.5, 49.5, 44.5, 39.5, 34.5])
-y = np.cos(x*(np.pi/180))
 
-# plot_area_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
-# plt.plot(degrees, y*18000)  
-# #plt.savefig("23_1 data/Area by image 23_1.png")
-# #plt.savefig("15_12 data/Area by image 15_12.png")
+
+# plot_area_by_degree(header, degrees, iterations, avg_per_image=False, avg_per_degree=False)
+# #plt.plot(degrees, y*18000)  
+# #plt.savefig("Image analysis v3/23_1 data/Area by image 23_1.png")
+# #plt.savefig("Image analysis v3/15_12 data/Area by image 15_12.png")
+# plt.savefig("Image analysis v3/13_2 data/Area by spot 13_2.png")
 # plt.show()
 
-plot_intensity_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
-plt.plot(degrees, y*240000)
-#plt.savefig("23_1 data/Total intensity by image 23_1 w fit.png")
+# plot_intensity_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
+# #plt.plot(degrees, y*240000)
+# plt.savefig("Image analysis v3/13_2 data/Total intensity by image 13_2.png")
+# plt.show()
+
+plot_average_intensity(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
+#plt.ylim(0,2)
+plt.savefig("Image analysis v3/13_2 data/Average intensity by image 13_2.png")
 plt.show()
-
-# plot_average_intensity(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
-# #plt.ylim(0,2)
-# plt.savefig("23_1 data/Average intensity by image 23_1.png")
-# plt.show()
 
 #plot_std(header, degrees, iterations, print_vals = False, by_degree=True)
 
 # plot_dist_from_target(header, degrees, iterations, target_loc, by_degree=False)
-# plt.savefig("23_1 data/Dist from target 23_1.png")
+# plt.savefig("Image analysis v3/13_2 data/Dist from target.png")
 # plt.show()
 
 # pixel_dist_from_target(header, degrees, iterations, target_loc)
-# plt.savefig("15_12 data/Pixel distance from target.png")
+# plt.savefig("Image analysis v3/13_2 data/Pixel distance from target.png")
 # plt.show()
 
 # weighted_pixel_dist(header, degrees, iterations, target_loc)
-# plt.savefig("Weighted pixel distance from target.png")
-# plt.show()
+# plt.savefig("Image analysis v3/13_2 data/Weighted pixel distance from target.png")
+# plt.show() 

@@ -5,19 +5,35 @@ from edge_detector_v3 import *
 # degrees = [45]
 # location = "Image analysis v3/Images 15_12/"
 # image_labels = [1,2,3,4,5,6]
-# date = "15_12"
+# date = "Image analysis v3/15_12"
 # xy_range = [[60, 1024], [0, 1280]] # in order y, x
 # avg_backs = False
 # target_loc = [644, 566]
+# file_type = ".jpg"
 
 # data set 2 variables
-degrees = [5,15,25,35,45,55]
-location = "Image analysis v3/Images 23_1/"
-image_labels = [1,2,3,4,5]
-date = "23_1"
-xy_range = [[90, 1024], [0, 1280]] # in order y, x
-avg_backs = True
-target_loc = [616, 571]
+# degrees = [5,15,25,35,45,55]
+# location = "Image analysis v3/Images 23_1/"
+# image_labels = [1,2,3,4,5]
+# date = "Image analysis v3/23_1"
+# xy_range = [[90, 1024], [0, 1280]] # in order y, x
+# avg_backs = True
+# back_iter = 4
+# target_loc = [616, 571]
+# file_type = ".jpg"
+
+#data set 3 variables
+degrees = [-60, -40, -20, 0, 20, 40, 60]
+location = "Image analysis v3/Images 13_2/45_"
+image_labels = [1,2]
+date = "Image analysis v3/13_2"
+xy_range = [[0, 1024], [0, 1280]] # in order y, x
+avg_backs = False
+#back_iter = 2
+target_loc = [594, 560]
+file_type = ".png"
+
+
 
 
 back_label = "back.jpg"
@@ -28,18 +44,18 @@ for deg in degrees:
     w_distances = []
 
     for num in image_labels:
-        img = location + str(deg) + "_" + str(num) + ".jpg"
+        img = location + str(deg) + "_" + str(num) + file_type
 
         back_name = location + str(deg) + "_back" 
 
         if avg_backs:
-            back = avg_background(back_name, 4)
+            back = avg_background(back_name, back_iter, file_type)
 
         elif not avg_backs:
-            back = im.imread((back_name + ".jpg"))
+            back = im.imread((back_name + file_type))
 
         title =  date + " data/locs/" + str(deg) + " " + str(num) + ".csv"
-        imgtitle = date + " data/figs/" + str(deg) + " " + str(num) + ".png"
+        imgtitle = date + " data/figs/" + str(deg) + " " + str(num) + file_type
         
         image, background = trim(img, back, xy_range[0], xy_range[1])
         image = np.array(image, dtype=np.int16)
