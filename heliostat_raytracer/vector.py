@@ -61,7 +61,7 @@ def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.nd
                      vector_position[1] + vector_norm[1]*d,
                      vector_position[2] + vector_norm[2]*d])
 
-def vector_from_elevation_azimuth(alpha, beta):
+def vector_from_azimuth_elevation(alpha, beta):
     # Convert degree to radians
     alpha, beta = alpha*np.pi/180, beta*np.pi/180
 

@@ -14,7 +14,7 @@ from experimental_params import experimental_params as exp
 # hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
 hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
 azimuth = 0
-elevation = 45 # Limit seems to be at 32deg
+elevation = 60 # Limit seems to be at 32deg
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_elevation_azimuth(azimuth, elevation)
 

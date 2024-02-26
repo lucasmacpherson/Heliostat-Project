@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import pickle as pkl
 
 import heliostat as hst
 from vector import *
@@ -130,3 +131,12 @@ def show_target_plane(model):
 
     ax.scatter(points[:, 0], points[:, 1], marker='o', color='blue')
     return fig, ax
+
+def efficiency_figure(data_file):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    with open(data_file, 'rb') as file:
+        efficiencies = pkl.load(file)
+
+    print(efficiencies)

@@ -22,3 +22,8 @@ def target_image_points(image_shape, model, pointsize):
         fill=(255, 255, 255))
 
     return img
+
+def target_image_smoothed(image_shape, model, smoothscale):
+    receiver_pos = model['receiver_position']
+    model = prune_rays(model)
+    rays = get_rays_at_target(model)
