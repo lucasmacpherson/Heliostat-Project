@@ -8,7 +8,7 @@ def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
     """
     Generate a square grid of evenly spaced identical initial beam points
 
-    returns np.array(x, y, z, direction_vector)
+    returns np.array(position_vector, direction_vector)
     """
     if raycasts**0.5 % 1 != 0: 
         raise ValueError("Total raycasts must be n^2 for integer n.")

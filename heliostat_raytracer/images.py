@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -23,7 +24,28 @@ def target_image_points(image_shape, model, pointsize):
 
     return img
 
-def target_image_smoothed(image_shape, model, smoothscale):
+def target_image_hist(image_shape, model):
     receiver_pos = model['receiver_position']
     model = prune_rays(model)
     rays = get_rays_at_target(model)
+
+    # Create a 2D histogram
+    hist, xedges, yedges = np.histogram2d(rays[:][-1][0][0], rays[:][-1][0][1], bins=image_shape)
+
+    # Create a figure and axis
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    # Display the 2D histogram as an image
+    ax.imshow(hist.T, extent=[xedges.min(), xedges.max(), yedges.min(), yedges.max()], origin='lower', cmap='viridis')
+
+    # Add a colorbar for reference
+    cbar = fig.colorbar()
+    cbar.set_label('Intensity')
+
+    # Customize the plot if needed
+    plt.title('2D Histogram of rays at Target Plane')
+    plt.xlabel('x-pixels')
+    plt.ylabel('y-pixels')
+
+    return fig, ax

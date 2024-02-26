@@ -13,10 +13,10 @@ from experimental_params import experimental_params as exp
 
 # hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
 hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
-azimuth = 0
-elevation = 60 # Limit seems to be at 32deg
+azimuth = 20
+elevation = 45 # Limit seems to be at 32deg
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
-incident_vec = -1*vector_from_elevation_azimuth(azimuth, elevation)
+incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
 """tilts = [
     -0.02, -0.1,
@@ -37,7 +37,7 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 500**2
+raycasts = 5000**2
 beam_size = 2.0
 start_height = 0.2
 
@@ -49,10 +49,10 @@ fig, ax = show_system(model)
 ax.axes.set_xlim3d(left=-0.6, right=0.6) 
 ax.axes.set_ylim3d(bottom=-0.6, top=0.6) 
 ax.axes.set_zlim3d(bottom=-0.6, top=0.6) 
-plt.show()
+# plt.show()
 
 fig, ax = show_target_plane(model)
-plt.show()
+# plt.show()
 
-img = target_image_points(exp.CAMERA_IMAGESIZE.value, model, 2)
-img.save("data/output_test.png")
+fig, ax = target_image_hist(exp.CAMERA_IMAGESIZE.value, model)
+plt.savefig('data/images/last_intensity_histogram.png')

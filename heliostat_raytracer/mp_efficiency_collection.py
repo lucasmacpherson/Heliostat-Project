@@ -34,7 +34,7 @@ if __name__ == "__main__":
     start_height = 0.25
 
     # Incident ray only in -x direction (-x, 0, -1)
-    elevations = np.arange(10, 80, 10)
+    elevations = np.arange(15, 75, 5)
     # elevations = np.array((35, 45, 55, 60))
     azimuths = np.arange(-80, 100, 20)
 
