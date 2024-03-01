@@ -69,6 +69,7 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, 
             }
 
 def create_geometry(model, receiver_size, mirror_size, ylim=(-1, 2)):
+    model['receiver_size'] = receiver_size
     recevier_pos = model['receiver_position']
     mirror_norms = model['mirror_normals']
     mirrors = model['mirror_positions']

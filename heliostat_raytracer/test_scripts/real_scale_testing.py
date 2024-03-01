@@ -37,7 +37,7 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 5000**2
+raycasts = 500**2
 beam_size = 2.0
 start_height = 0.2
 
@@ -55,4 +55,5 @@ fig, ax = show_target_plane(model)
 # plt.show()
 
 fig, ax = target_image_hist(exp.CAMERA_IMAGESIZE.value, model)
-plt.savefig('data/images/last_intensity_histogram.png')
+# plt.show()
+plt.savefig('data/test_intensity_histogram.png')
