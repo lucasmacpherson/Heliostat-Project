@@ -4,7 +4,7 @@ from enum import Enum
 
 from heliostat import *
 from raytracer import *
-from images import target_image_points
+from images import intensity_image
 from experimental_params import experimental_params as exp
 from vector import *
 
@@ -120,7 +120,7 @@ def mphelper_efficiency_imagegen(hstats, incident_elev, incident_azi, receiver_p
     
     model = prune_rays(model)
     if fname != '':
-        img = target_image_points(exp.CAMERA_IMAGESIZE.value, model, pointsize=2)
+        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=2)
         img.save(fname)
 
     return collection_frac

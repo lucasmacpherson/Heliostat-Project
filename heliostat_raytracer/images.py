@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw
+from scipy.ndimage import gaussian_filter
 
 from experimental_params import experimental_params as exp
 from raytracer import *
@@ -26,6 +27,52 @@ def target_image_points(image_shape, model, pointsize):
         draw.ellipse((pos[0]-pointsize, pos[1]-pointsize, pos[0]+pointsize, pos[1]+pointsize),
         fill=(255, 255, 255))
 
+    return img
+
+def create_intensity_distribution(points, image_size, sigma):
+    """
+    Creates an intensity distribution image from a list of points.
+
+    Parameters:
+    points (list of tuples): List of points (x, y) where the rays are incident.
+    image_size (tuple): Size of the image (width, height).
+    sigma (float): Standard deviation for the Gaussian kernel.
+
+    Returns:
+    PIL.Image: Image object representing the intensity distribution.
+    """
+    # Create an empty image
+    image = np.zeros(image_size)
+
+    # Increment intensity values
+    for point in points:
+        x, y = point
+        x = int(round(x))
+        y = int(round(y))
+        if 0 <= x < image_size[0] and 0 <= y < image_size[1]:
+            image[y, x] += 1
+
+    # Apply Gaussian convolution
+    image = gaussian_filter(image, sigma=sigma)
+
+    # Normalize the image
+    max_intensity = np.max(image)
+    if max_intensity > 0:
+        image = (image / max_intensity * 255).astype(np.uint8)
+
+    # Create and return the PIL image
+    return Image.fromarray(image, 'L')
+
+def intensity_image(model, image_size, sigma):
+    rays = model['rays']
+    receiver_pos = model['receiver_position']
+
+    points = []
+    for ray in rays:
+        pos = position_to_pixels(ray[-1][0], receiver_pos, image_size)
+        points.append(np.array((pos[0], pos[1])))
+
+    img = create_intensity_distribution(points, image_size, sigma)
     return img
 
 def target_image_hist(image_shape, model):

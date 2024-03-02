@@ -21,7 +21,7 @@ ylim = (-1, 2)
 hstat_layout = [2, 2]
 tilt_deg = -10
 
-worker_threads = 12
+worker_threads = 16
 
 if __name__ == "__main__":
     mp.freeze_support()
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
     tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-    raycasts = 4000**2
+    raycasts = 5000**2
     beam_size = 2.5
     start_height = 0.25
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         for i, azimuth in enumerate(azimuths):
             args.append([hstats, elevation, azimuth, receiver_pos, heliostat_width, receiver_size, 
                         mirror_size, beam_size, raycasts, start_height, tilts, (-1, 2),
-                        f"data/images/{elevation}_{azimuth}_16Mrays_points.png"])
+                        f"data/images/{elevation}_{azimuth}_25Mrays_intensity.png"])
 
         with mp.Pool(worker_threads) as pool:
         # with mp.Pool() as pool:

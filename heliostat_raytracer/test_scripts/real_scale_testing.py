@@ -37,7 +37,7 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 500**2
+raycasts = 2000**2
 beam_size = 2.0
 start_height = 0.2
 
@@ -54,6 +54,5 @@ ax.axes.set_zlim3d(bottom=-0.6, top=0.6)
 fig, ax = show_target_plane(model)
 # plt.show()
 
-fig, ax = target_image_hist(exp.CAMERA_IMAGESIZE.value, model)
-# plt.show()
-plt.savefig('data/test_intensity_histogram.png')
+img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+img.save("data/test_intensity_distribution.png")
