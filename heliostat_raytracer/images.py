@@ -58,7 +58,7 @@ def create_intensity_distribution(points, image_size, sigma):
     # Normalize the image
     max_intensity = np.max(image)
     if max_intensity > 0:
-        image = (image / 8 * 255).astype(np.uint8)
+        image = (image / 4 * 255).astype(np.uint8)
 
     # Create and return the PIL image
     return Image.fromarray(image, 'L')

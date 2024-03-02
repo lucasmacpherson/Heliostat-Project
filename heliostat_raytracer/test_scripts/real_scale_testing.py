@@ -37,8 +37,8 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 4000**2
-beam_size = 1.4
+raycasts = 5000**2
+beam_size = 1.6
 start_height = 0.2
 
 model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
@@ -54,5 +54,5 @@ plt.show()
 fig, ax = show_target_plane(model)
 # plt.show()
 
-img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=3)
 img.save("data/test_intensity_distribution.png")

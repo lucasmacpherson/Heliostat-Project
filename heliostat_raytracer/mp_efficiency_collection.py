@@ -21,7 +21,7 @@ ylim = (-1, 2)
 hstat_layout = [2, 2]
 tilt_deg = -10
 
-worker_threads = 12
+worker_threads = 6
 
 if __name__ == "__main__":
     mp.freeze_support()

@@ -2,7 +2,7 @@ import numpy as np
 
 from vector import *
 
-def vector_to_receiver(hstat, recevier):
+def vector_to_receiver(hstat, recevier) -> np.ndarray:
     """
     Calculate the normalised direction vector pointing torwards receiver
     """

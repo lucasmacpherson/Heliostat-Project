@@ -120,7 +120,7 @@ def mphelper_efficiency_imagegen(hstats, incident_elev, incident_azi, receiver_p
     
     model = prune_rays(model)
     if fname != '':
-        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=3)
         img.save(fname)
 
     return collection_frac
