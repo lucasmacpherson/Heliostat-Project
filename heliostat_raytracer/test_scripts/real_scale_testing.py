@@ -37,8 +37,8 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-raycasts = 2000**2
-beam_size = 2.0
+raycasts = 4000**2
+beam_size = 1.4
 start_height = 0.2
 
 model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
@@ -49,7 +49,7 @@ fig, ax = show_system(model)
 ax.axes.set_xlim3d(left=-0.6, right=0.6) 
 ax.axes.set_ylim3d(bottom=-0.6, top=0.6) 
 ax.axes.set_zlim3d(bottom=-0.6, top=0.6) 
-# plt.show()
+plt.show()
 
 fig, ax = show_target_plane(model)
 # plt.show()

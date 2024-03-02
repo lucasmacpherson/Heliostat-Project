@@ -58,13 +58,13 @@ def create_intensity_distribution(points, image_size, sigma):
     # Normalize the image
     max_intensity = np.max(image)
     if max_intensity > 0:
-        image = (image / max_intensity * 255).astype(np.uint8)
+        image = (image / 8 * 255).astype(np.uint8)
 
     # Create and return the PIL image
     return Image.fromarray(image, 'L')
 
 def intensity_image(model, image_size, sigma):
-    rays = model['rays']
+    rays = get_rays_at_target(model)
     receiver_pos = model['receiver_position']
 
     points = []

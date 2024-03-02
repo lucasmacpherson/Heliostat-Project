@@ -21,7 +21,7 @@ ylim = (-1, 2)
 hstat_layout = [2, 2]
 tilt_deg = -10
 
-worker_threads = 16
+worker_threads = 12
 
 if __name__ == "__main__":
     mp.freeze_support()
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
     raycasts = 5000**2
-    beam_size = 2.5
+    beam_size = 1.6
     start_height = 0.25
 
     # Incident ray only in -x direction (-x, 0, -1)
