@@ -21,7 +21,7 @@ ylim = (-1, 2)
 hstat_layout = [2, 2]
 tilt_deg = -10
 
-worker_threads = 6
+worker_threads = 4
 
 if __name__ == "__main__":
     mp.freeze_support()
@@ -31,10 +31,10 @@ if __name__ == "__main__":
 
     raycasts = 5000**2
     beam_size = 1.6
-    start_height = 0.25
+    start_height = 0.2
 
     # Incident ray only in -x direction (-x, 0, -1)
-    elevations = np.arange(15, 75, 5)
+    elevations = np.arange(15, 75, 15)
     # elevations = np.array((35, 45, 55, 60))
     azimuths = np.arange(-80, 100, 20)
 

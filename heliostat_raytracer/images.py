@@ -47,8 +47,8 @@ def create_intensity_distribution(points, image_size, sigma):
     # Increment intensity values
     for point in points:
         x, y = point
-        x = int(round(x))
-        y = int(round(y))
+        x = int(np.floor(x))
+        y = int(np.floor(y))
         if 0 <= x < image_size[0] and 0 <= y < image_size[1]:
             image[y, x] += 1
 
@@ -58,7 +58,7 @@ def create_intensity_distribution(points, image_size, sigma):
     # Normalize the image
     max_intensity = np.max(image)
     if max_intensity > 0:
-        image = (image / 4 * 255).astype(np.uint8)
+        image = (image * 255).astype(np.uint8)
 
     # Create and return the PIL image
     return Image.fromarray(image, 'L')

@@ -13,8 +13,8 @@ from experimental_params import experimental_params as exp
 
 # hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
 hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
-azimuth = 20
-elevation = 45 # Limit seems to be at 32deg
+azimuth = 0
+elevation = 55 # Limit seems to be at 32deg
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
@@ -52,7 +52,7 @@ ax.axes.set_zlim3d(bottom=-0.6, top=0.6)
 plt.show()
 
 fig, ax = show_target_plane(model)
-# plt.show()
+plt.show()
 
-img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=3)
+img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
 img.save("data/test_intensity_distribution.png")
