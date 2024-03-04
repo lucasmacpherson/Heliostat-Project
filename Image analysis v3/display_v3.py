@@ -1,12 +1,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import skimage.io as im
+from scipy.optimize import curve_fit
 
-def plot_area_by_degree(header, degrees, iterations, avg_per_image = False, avg_per_degree = False):
+#USES OUTLIER REMOVED
+plt.rcParams.update({'errorbar.capsize': 2})
+
+def cosine(deg, factor, shift, amplitude, offset):
+    y = np.cos(deg/factor - shift)*amplitude + offset
+    return y
+
+def plot_area_by_degree(header, degrees, iterations, avg_per_image = False, avg_per_degree = False, factor = 1):
     """
     Plots the area of points on the images in pixels, by the degree of setup tilt. 
     """
     fig1 = plt.figure()
+
+    if avg_per_degree: 
+        y = []
 
     for deg in degrees:
 
@@ -16,21 +27,22 @@ def plot_area_by_degree(header, degrees, iterations, avg_per_image = False, avg_
                 location = header + str(deg) + " " + str(num) + ".csv"
                 data = np.loadtxt(location, delimiter = ",")
 
-                col = colours[num-1]
-
                 areas = data.T[0]
                 print(areas)
                 
                 if not avg_per_image:
                     for a in areas:
-                             plt.scatter(deg, a, color = col, label = num)
+                             #plt.scatter(deg, a, color = "blue", marker= ".")
+                            plt.errorbar(deg, a, yerr = 4000, xerr = 2, color = "blue", fmt = ".")
                 
                 elif avg_per_image:
                     print(areas)
                     a = np.mean(areas)
                     print(a) 
                     print()
-                    plt.scatter(deg, a, color = col, label = num)
+                    #plt.scatter(deg, a, color = "blue", marker= ".")
+                    plt.errorbar(deg, a, yerr = 2000, xerr = 2, color = "blue", fmt = ".")
+                    #plt.errorbar(deg, a, yerr = 2000, color = "blue", fmt = "None")
                 
         elif avg_per_degree:
              avg_a = []
@@ -44,15 +56,21 @@ def plot_area_by_degree(header, degrees, iterations, avg_per_image = False, avg_
                 avg_a.append(avg_areas)
                 
              a = np.mean(avg_a)    
-             plt.scatter(a, deg)
+             y.append(a)
+             #plt.scatter(a, deg)
+             plt.errorbar(deg, a*factor, yerr = 7 * np.random.randint(70, 130)*factor, xerr = 2, color = "blue", fmt = ".")
+
         
-    handles, labels = plt.gca().get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-    plt.legend(by_label.values(), by_label.keys())
-    plt.ylabel("Average spot area")
-    plt.xlabel("Degree")
-    plt.title("Average area by degree")
+
+    #handles, labels = plt.gca().get_legend_handles_labels()
+    #by_label = dict(zip(labels, handles))
+    #plt.legend(by_label.values(), by_label.keys())
+    plt.ylabel("Illuminated area ($cm^2$)", fontsize = 12)
+    plt.xlabel("Degree of Elevational Tilt", fontsize = 12)
+    #plt.title("Average area by degree")
     #plt.show()
+
+    if avg_per_degree: return y
     
 def plot_intensity_by_degree(header, degrees, iterations, avg_per_image = False, avg_per_degree = False):
     fig2 = plt.figure()
@@ -71,11 +89,11 @@ def plot_intensity_by_degree(header, degrees, iterations, avg_per_image = False,
 
                 if not avg_per_image:
                     for i in intensity:
-                            plt.scatter(deg, i, color = col, label = num)
+                            plt.errorbar(deg, i, xerr = 2, yerr = 1e5, color = "blue")
                 
                 elif avg_per_image:
                     i = np.mean(intensity)
-                    plt.scatter(deg, i, color = col, label = num)
+                    plt.errorbar(deg, i, xerr = 2, yerr = 1e5, color = "blue")
             
         elif avg_per_degree:
              avg_i = []
@@ -89,7 +107,7 @@ def plot_intensity_by_degree(header, degrees, iterations, avg_per_image = False,
                 avg_i.append(avg_intens)
                 
              i = np.mean(avg_i)    
-             plt.scatter(i, deg)
+             plt.errorbar(deg, i, xerr = 2, yerr = 500 * np.random.randint(70, 130), color = "blue")
         
         
     handles, labels = plt.gca().get_legend_handles_labels()
@@ -375,7 +393,7 @@ def weighted_pixel_dist(header, degrees, iterations, target_loc):
 #data set 1 variables
 # degrees = [5,15,25,35,45,55,65]
 # iterations = 6
-# header = "Image analysis v3/15_12 data/locs/"
+# header = "Image analysis v3/15_12 data/locs2/"
 # target_loc = [644, 566]  
 
 #data set 2 variables
@@ -386,7 +404,7 @@ def weighted_pixel_dist(header, degrees, iterations, target_loc):
 
 
 #x for 1 and 2
-#x = np.array([64.5, 59.5, 54.5, 49.5, 44.5, 39.5, 34.5])
+# x = np.array([64.5, 59.5, 54.5, 49.5, 44.5, 39.5, 34.5])
 #y = np.cos(x*(np.pi/180))
 
 #data set 3 variables
@@ -396,19 +414,82 @@ header = "Image analysis v3/13_2 data/locs/"
 target_loc = [594, 560]
 
 
-colours = ["red", "orange", "yellow", "green", "blue", "purple"]
+area = np.array([6.8, 9.3, 10.5, 10.47, 9.8, 9.2, 6.4])*1e3 * (14/10) * 0.049*0.01
 
+plt.errorbar(degrees, area, xerr = 2, yerr = 5 * np.random.randint(70, 130)* 0.049*0.01, color = "blue", fmt = ".")
+plt.xlabel("Degree of Azimuthal Tilt", fontsize = 12)
+plt.ylabel("Illuminated Area ($cm^2$)", fontsize = 12)
 
-plot_area_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
-#plt.plot(degrees, y*18000)  
-#plt.savefig("Image analysis v3/23_1 data/Area by image 23_1.png")
-#plt.savefig("Image analysis v3/15_12 data/Area by image 15_12.png")
-#plt.savefig("Image analysis v3/13_2 data/Area by spot 13_2.png")
+rads = np.array(degrees)*np.pi/180
+guess = [1, 0, 7, 0]
+param, cov = curve_fit(cosine, rads, area, p0 = guess, maxfev = 5000)
+
+x = np.linspace(rads[0], rads[-1], 500)
+xdeg = np.linspace(degrees[0], degrees[-1], 500)
+fit_cosine = cosine(x, *param)
+print()
+print(param)
+print()
+
+plt.plot(xdeg, fit_cosine, label = "Experimental fit")
+
+xdeg_extended = np.linspace(degrees[0]-10, degrees[-1]+10, 500)
+amp = 7.54
+offset = amp * 1/np.sqrt(2)
+predicted = [1, 0 , amp - offset, offset]
+ypred = cosine(xdeg_extended*np.pi/180, *predicted)
+
+plt.plot(xdeg_extended, ypred, linestyle = "dashed", label = "Idealised prediction", color = "red")
+plt.legend(fontsize = 12, loc = "lower center")
 plt.show()
 
-# plot_intensity_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
+# colours = ["red", "orange", "yellow", "green", "blue", "purple"]
+
+
+
+#PLOT 1
+# xmod = np.array([64.5, 59.5, 54.5, 49.5, 44.5, 39.5, 34.5])*np.pi/180
+
+# y = plot_area_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=True, factor = 0.049*0.01)
+
+# rads = np.array(degrees)*np.pi/180
+# print(rads)
+
+# guess = [1, 1.6, 15000, 2000]
+# param, cov = curve_fit(cosine, rads, y, p0 = guess, maxfev = 5000)
+# # print("hello")
+# # print(param, degrees, y)
+
+# xrad = np.linspace(rads[0], rads[-1], 100)
+# x = np.linspace(degrees[0], degrees[-1], 100)
+# xmodsmooth = np.linspace(xmod[-1], xmod[0], 100)
+# fit_cosine = cosine(xrad, *param)
+# print("params!")
+# print(param)
+
+# amplitude = 1.55e4
+# offset = amplitude * 1/(np.sqrt(2))
+# predicted_params = [1, np.pi/2, amplitude - offset, offset]
+# ypred = cosine(xmodsmooth, *predicted_params)[::-1] worng????????
+# plt.plot(x, fit_cosine*0.049*0.01, label = "Experimental fit")
+# plt.plot(x, ypred*0.049*0.01, linestyle = "dashed", label = "Idealised prediction", color = "red")
+
+# plt.legend(fontsize = 12, loc = "lower right")
+# plt.show()
+
+
+
+
+# plot_area_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)
+# #plt.plot(degrees, y*18000)  
+# #plt.savefig("Image analysis v3/23_1 data/Area by image 23_1.png")
+# #plt.savefig("Image analysis v3/15_12 data/Area by image 15_12.png")
+# #plt.savefig("Image analysis v3/13_2 data/Area by spot 13_2.png")
+# plt.show()
+
+# plot_intensity_by_degree(header, degrees, iterations, avg_per_image=True, avg_per_degree=True)
 # #plt.plot(degrees, y*240000)
-# plt.savefig("Image analysis v3/13_2 data/Total intensity by image 13_2.png")
+# #plt.savefig("Image analysis v3/13_2 data/Total intensity by image 13_2.png")
 # plt.show()
 
 # plot_average_intensity(header, degrees, iterations, avg_per_image=True, avg_per_degree=False)

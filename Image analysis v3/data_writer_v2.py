@@ -29,7 +29,7 @@ image_labels = [1,2]
 date = "Image analysis v3/13_2"
 xy_range = [[0, 1024], [0, 1280]] # in order y, x
 avg_backs = False
-#back_iter = 2
+back_iter = 2
 target_loc = [594, 560]
 file_type = ".png"
 

@@ -70,4 +70,40 @@ from edge_detector_v3 import *
 #     binary = gen_binary(removed, imgtitle, threshold=10)
 #     #plt.show()
 
+#874/1140
 
+# plt.close()
+# size = 12
+
+# img = "Image analysis v3/Images 13_2/45_20_2.png"
+
+# image = im.imread(img)[150:, 0:1140]
+# print(image.shape)
+
+# #plt.figure(figsize = [50,80])
+# plt.imshow(image, norm = "linear")
+# cbar = plt.colorbar()
+
+# cbar.ax.tick_params(labelsize=size)
+# plt.xticks(fontsize = size)
+# plt.yticks(fontsize = size)
+
+# plt.show()
+
+def cosine(deg, factor, shift, amplitude, offset):
+    y = np.cos(deg/factor - shift)*amplitude + offset
+    return y
+
+
+degrees = [5,15,25,35,45,55,65]
+rads = np.array(degrees)*np.pi/180
+
+xrad = np.linspace(rads[0], rads[-1], 100)
+x = np.linspace(degrees[0], degrees[-1], 100)
+
+predicted_params = [1, np.pi/2, 15000, 10000]
+ypred = cosine(xrad, *predicted_params)
+plt.plot(x, ypred, label = "Theoretical prediction")
+print(xrad)
+
+plt.show()
