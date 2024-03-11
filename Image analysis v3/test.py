@@ -90,20 +90,30 @@ from edge_detector_v3 import *
 
 # plt.show()
 
-def cosine(deg, factor, shift, amplitude, offset):
-    y = np.cos(deg/factor - shift)*amplitude + offset
-    return y
+# def cosine(deg, factor, shift, amplitude, offset):
+#     y = np.cos(deg/factor - shift)*amplitude + offset
+#     return y
 
 
-degrees = [5,15,25,35,45,55,65]
-rads = np.array(degrees)*np.pi/180
+# degrees = [5,15,25,35,45,55,65]
+# rads = np.array(degrees)*np.pi/180
 
-xrad = np.linspace(rads[0], rads[-1], 100)
-x = np.linspace(degrees[0], degrees[-1], 100)
+# xrad = np.linspace(rads[0], rads[-1], 100)
+# x = np.linspace(degrees[0], degrees[-1], 100)
 
-predicted_params = [1, np.pi/2, 15000, 10000]
-ypred = cosine(xrad, *predicted_params)
-plt.plot(x, ypred, label = "Theoretical prediction")
-print(xrad)
+# predicted_params = [1, np.pi/2, 15000, 10000]
+# ypred = cosine(xrad, *predicted_params)
+# plt.plot(x, ypred, label = "Theoretical prediction")
+# print(xrad)
 
-plt.show()
+# plt.show()
+
+x = [1,2,4,5,6]
+mean = np.mean(x)
+
+var_vals = (x-mean)**2
+print(mean)
+print(var_vals)
+print()
+var = np.sum(var_vals)/len(x)
+print(var)

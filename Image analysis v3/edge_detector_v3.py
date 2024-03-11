@@ -25,7 +25,7 @@ def trim(img, background, y_range, x_range, back_given = True):
     
     return image, b_image
 
-def gen_binary(image, imgtitle, savefig = True, threshold = 10): 
+def gen_binary(image, imgtitle = "Title not given", savefig = True, threshold = 10): 
     """generates and saves binary version of image, 1 for object 0 for background"""
 
     dim = np.shape(image)
@@ -119,6 +119,46 @@ def obj_data_extractor(data, og_image: str): #background already removed!
     info = np.array([areas, intensities, x_centres, y_centres])
 
     return info.T
+
+
+def image_data_extractor(binary, removed_image, target_loc): #extracts data for whole image, ignoring object separation
+    #removed image has background removed. try without? should make small difference to intensity, otherwise?!!!!
+
+    total_intensity = 0
+    pixels_illuminated = 0
+    #weighted_pos = []
+    weighted_dist = []
+
+    x = target_loc[0]
+    y = target_loc[1]
+
+    dim = np.shape(binary)
+
+    for i in range(0, dim[0]):
+        for j in range(0, dim[1]):
+             
+            if binary[i,j]:
+                intensity = removed_image[i,j]
+
+                pixels_illuminated += 1
+                total_intensity += intensity
+                
+                x_sep = (i - x)*(i - x)
+                y_sep = (j - y)*(j - y)
+                weighted_dist.append((np.sqrt((x_sep + y_sep)) * intensity))
+                #weighted_pos.append((np.sqrt((i*i + j*j)) * intensity))
+
+    separation = np.sum(weighted_dist)/total_intensity
+
+    mean = np.mean(weighted_dist)
+
+    var_vals = (weighted_dist - mean)**2
+    var = np.sum(var_vals)/total_intensity
+
+    return total_intensity, pixels_illuminated, separation, var
+
+
+
 
 def avg_background(name, num_backs, file_type):
 

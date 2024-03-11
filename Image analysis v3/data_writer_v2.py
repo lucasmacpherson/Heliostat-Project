@@ -23,8 +23,20 @@ from edge_detector_v3 import *
 # file_type = ".jpg"
 
 #data set 3 variables
-degrees = [-60, -40, -20, 0, 20, 40, 60]
-location = "Image analysis v3/Images 13_2/45_"
+# degrees = [-60, -40, -20, 0, 20, 40, 60]
+# location = "Image analysis v3/Images 13_2/45_"
+# image_labels = [1,2]
+# date = "Image analysis v3/13_2"
+# xy_range = [[0, 1024], [0, 1280]] # in order y, x
+# avg_backs = False
+# back_iter = 2
+# target_loc = [594, 560]
+# file_type = ".png"
+
+#data set 4 variables
+degrees = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
+location = "Image analysis v3/Images 4_3/15_"
+#location = "Image analysis v3/Images 4_3/30_"
 image_labels = [1,2]
 date = "Image analysis v3/13_2"
 xy_range = [[0, 1024], [0, 1280]] # in order y, x
@@ -32,7 +44,6 @@ avg_backs = False
 back_iter = 2
 target_loc = [594, 560]
 file_type = ".png"
-
 
 
 
