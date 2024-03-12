@@ -25,7 +25,7 @@ def trim(img, background, y_range, x_range, back_given = True):
     
     return image, b_image
 
-def gen_binary(image, imgtitle = "Title not given", savefig = True, threshold = 10): 
+def gen_binary(image, imgtitle = "Title not given", savefig = True, threshold = 10, disk_size:int = 5):
     """generates and saves binary version of image, 1 for object 0 for background"""
 
     dim = np.shape(image)
@@ -39,7 +39,7 @@ def gen_binary(image, imgtitle = "Title not given", savefig = True, threshold = 
                     binary[x,y] = True
                 else: binary[x,y] = False
 
-    footprint = disk(5)
+    footprint = disk(disk_size)
     closed = closing(binary, footprint)
 
     if savefig: 

@@ -13,8 +13,8 @@ from experimental_params import experimental_params as exp
 
 # hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
 hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
-azimuth = 0
-elevation = 55 # Limit seems to be at 32deg
+azimuth = 30
+elevation = 15 # Limit seems to be at 32deg
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
@@ -38,7 +38,7 @@ fig, ax = target_plane_figure(model)
 plt.show() """
 
 raycasts = 5000**2
-beam_size = 1.6
+beam_size = 3.0
 start_height = 0.2
 
 model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
