@@ -38,15 +38,9 @@ plt.show()
 fig, ax = target_plane_figure(model)
 plt.show() """
 
-<<<<<<< HEAD
-raycasts = 5000**2
-beam_size = 3.0
-start_height = 0.2
-=======
 raycasts = 500**2
 beam_size = 3.0
 start_height = 0.20
->>>>>>> raytracer_testing
 
 model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
 efficiency = calculate_collection_fraction(model)
