@@ -107,7 +107,6 @@ def mphelper_efficiency(hstats, incident_elev, incident_azi, receiver_pos, refle
     model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=tilts)
     model = create_geometry(model, receiver_size, mirror_size, ylim)
     model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
-    model = prune_rays(model)
 
     return calculate_collection_fraction(model)
 
@@ -118,9 +117,9 @@ def mphelper_efficiency_imagegen(hstats, incident_elev, incident_azi, receiver_p
     model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
     collection_frac = calculate_collection_fraction(model)
     
-    model = prune_rays(model)
+    # model = prune_rays(model)
     if fname != '':
-        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=5)
+        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
         img.save(fname)
 
     return collection_frac

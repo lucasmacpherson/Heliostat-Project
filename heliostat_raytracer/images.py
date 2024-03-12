@@ -46,11 +46,14 @@ def create_intensity_distribution(points, image_size, sigma):
 
     # Increment intensity values
     for point in points:
-        x, y = point
-        x = int(np.floor(x))
-        y = int(np.floor(y))
-        if 0 <= x < image_size[0] and 0 <= y < image_size[1]:
-            image[y, x] += 1
+        try:
+            x, y = point
+            x = int(np.floor(x))
+            y = int(np.floor(y))
+            if 0 <= x < image_size[0] and 0 <= y < image_size[1]:
+                image[y, x] += 1
+        except IndexError:
+            print(f"Point ({x},{y}) outside camera frame -> discarding...")
 
     # Apply Gaussian convolution
     image = gaussian_filter(image, sigma=sigma)
@@ -58,7 +61,7 @@ def create_intensity_distribution(points, image_size, sigma):
     # Normalize the image
     max_intensity = np.max(image)
     if max_intensity > 0:
-        image = (image * 255).astype(np.uint8)
+        image = (image / 2 * 255).astype(np.uint8)
 
     # Create and return the PIL image
     return Image.fromarray(image, 'L')
