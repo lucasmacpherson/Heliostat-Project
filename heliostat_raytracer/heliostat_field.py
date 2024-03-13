@@ -97,6 +97,12 @@ def raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_h
     model['rays'] = rays
     return model
 
+def raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts):
+    initial_rays = generate_source_incidence(source_dist, incident_vec, system_extent, raycasts)
+    rays = run_raytracer(model, initial_rays)
+    model['rays'] = rays
+    return model
+
 def calculate_collection_fraction(model):
     raycasts = len(model['rays'])
     tgt_plane_rays = get_rays_at_target(model)

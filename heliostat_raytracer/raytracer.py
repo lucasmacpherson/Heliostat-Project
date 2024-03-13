@@ -4,12 +4,7 @@ from tqdm import tqdm
 from heliostat import *
 from vector import *
 
-def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
-    """
-    Generate a square grid of evenly spaced identical initial beam points
-
-    returns np.array(position_vector, direction_vector)
-    """
+def uniform_2D_grid(beam_size, raycasts):
     if raycasts**0.5 % 1 != 0: 
         raise ValueError("Total raycasts must be n^2 for integer n.")
     xx, yy =  np.meshgrid(
@@ -19,11 +14,49 @@ def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
 
     x = xx.ravel()
     y = yy.ravel()
+    return x, y
+
+def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
+    """
+    Generate a square grid of evenly spaced identical initial beam points
+    returns np.array(position_vector, direction_vector)
+    """
+    x, y = uniform_2D_grid(beam_size, raycasts)
 
     rays = []
     for i in range(raycasts):
         ray_pos = np.hstack((x[i], y[i], start_height))
         rays.append(np.array((ray_pos, incident_vec), dtype=np.ndarray))
+
+    return rays
+
+def generate_source_incidence(source_dist, principle_vec, system_extent, raycasts):
+    if raycasts**0.5 % 1 != 0: 
+        raise ValueError("Total raycasts must be n^2 for integer n.")
+    points1D = int(np.sqrt(raycasts))
+    source_pos = source_dist * -principle_vec
+    
+    # Transform into coordinates with source at (0, 0)
+    l1 = system_extent[0] - source_pos
+    l2 = system_extent[1] - source_pos
+
+    r1, theta1, phi1 = cartesian_to_spherical(l1[0], l1[1], l1[2])
+    r2, theta2, phi2 = cartesian_to_spherical(l2[0], l2[1], l2[2])
+
+    tt, pp = np.meshgrid(
+        np.linspace(theta2, theta1, points1D, endpoint=True), 
+        np.linspace(phi2 + 2*np.pi, phi1, points1D, endpoint=True)
+    )
+
+    thetas = tt.ravel()
+    phis = pp.ravel()
+
+    rays = []
+    for i in range(raycasts):
+        l = np.array(spherical_to_cartesian(source_dist, thetas[i], phis[i]))
+        ray_pos = l + source_pos # Transform back to normal coordinates
+        incident_vec = norm_vector(l)
+        rays.append(np.array((ray_pos - 0.9*incident_vec, incident_vec), dtype=np.ndarray))
 
     return rays
 

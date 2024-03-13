@@ -13,8 +13,13 @@ from experimental_params import experimental_params as exp
 
 # hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
 hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
-azimuth = 0
-elevation = 45 # Limit seems to be at 32deg
+system_extent = np.array([
+    np.array((0.3, 0.5, -0.3)),
+    np.array((-0.2, -0.5, 0.2))
+])
+
+azimuth = -30
+elevation = 15
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
@@ -25,24 +30,19 @@ incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
     -0.1, -0.1
 ]"""
 
-tilt_deg = 0
+tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
 model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.HELIOSTAT_WIDTH.value, tilts=tilts)
 model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
-# model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
-""" 
-fig, ax = heliostat_field_figure(model, scale=0.3)
-plt.show()
 
-fig, ax = target_plane_figure(model)
-plt.show() """
-
-raycasts = 500**2
+raycasts = 5000**2
 beam_size = 3.0
 start_height = 0.20
+source_dist = 12
 
-model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+# model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
 efficiency = calculate_collection_fraction(model)
 print(f"Elevation angle: {elevation}, Azimuth: {azimuth} had collection efficiency {efficiency*100}%")
 

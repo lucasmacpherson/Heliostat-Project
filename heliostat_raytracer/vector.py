@@ -78,3 +78,15 @@ def vector_from_azimuth_elevation(alpha, beta):
     f = np.matmul(R, f)
 
     return f
+
+def cartesian_to_spherical(x, y, z):
+    r = np.sqrt(x**2 + y**2 + z**2)
+    theta = np.arccos(z / r)  # Polar angle
+    phi = np.arctan2(y, x)    # Azimuthal angle
+    return r, theta, phi
+
+def spherical_to_cartesian(r, theta, phi):
+    x = r * np.sin(theta) * np.cos(phi)
+    y = r * np.sin(theta) * np.sin(phi)
+    z = r * np.cos(theta)
+    return x, y, z
