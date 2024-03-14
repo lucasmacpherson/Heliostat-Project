@@ -23,7 +23,7 @@ tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.HELIOSTAT_WIDTH.value, tilts=tilts)
 model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
-raycasts = 5**2
+raycasts = [4, 4]
 beam_size = 3.0
 source_dist = 10
 

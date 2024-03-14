@@ -20,7 +20,7 @@ def calculate_mirror_normal(receiver_vec, incident_vec):
         R = calculate_rotation_matrix(xproduct, theta/2)
         
     if theta != 0:
-        return np.array(np.matmul(R, -incident_vec))
+        return -np.array(np.matmul(R, incident_vec))
     else:
         return -incident_vec
 
@@ -30,14 +30,14 @@ def calculate_reflection(mirror_norm, incident_vec):
     """
     return norm_vector(np.array(incident_vec - 2*mirror_norm.dot(incident_vec.dot(mirror_norm))))
 
-def calculate_mirror_positions(hstat, mirror_normal, receiver_vec, reflecting_width):
+def calculate_mirror_positions(hstat, mirror_normal, receiver_vec, mirror_sep):
     """
     Calculate the positions of the 2 heliostat mirrors, seperated from the central
-    position by a distance of reflecting_width/4.
+    position by a distance of mirror_sep/2.
 
     Function returns a tuple of (mirror_positions, offset_vectors)
     """
-    step = reflecting_width/4
+    step = mirror_sep/2
     xproduct = norm_vector(np.cross(mirror_normal, receiver_vec))
     return (np.array([hstat - step*xproduct, hstat + step*xproduct]),
             np.array([-xproduct, xproduct]))

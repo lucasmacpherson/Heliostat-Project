@@ -18,8 +18,8 @@ system_extent = np.array([
     np.array((-0.2, -0.5, 0.2))
 ])
 
-azimuth = -30
-elevation = 15
+azimuth = 0
+elevation = 42
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
@@ -33,10 +33,10 @@ incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.HELIOSTAT_WIDTH.value, tilts=tilts)
-model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
+model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.HELIOSTAT_WIDTH.value, tilts='ideal')
+model = create_geometry(model, (0.5, 0.5), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
-raycasts = 5000**2
+raycasts = [250, 250]
 beam_size = 3.0
 start_height = 0.20
 source_dist = 12

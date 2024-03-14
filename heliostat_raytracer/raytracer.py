@@ -31,9 +31,6 @@ def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
     return rays
 
 def generate_source_incidence(source_dist, principle_vec, system_extent, raycasts):
-    if raycasts**0.5 % 1 != 0: 
-        raise ValueError("Total raycasts must be n^2 for integer n.")
-    points1D = int(np.sqrt(raycasts))
     source_pos = source_dist * -principle_vec
     
     # Transform into coordinates with source at (0, 0)
@@ -42,18 +39,20 @@ def generate_source_incidence(source_dist, principle_vec, system_extent, raycast
 
     r1, theta1, phi1 = cartesian_to_spherical(l1[0], l1[1], l1[2])
     r2, theta2, phi2 = cartesian_to_spherical(l2[0], l2[1], l2[2])
+    # Choose correct phi value to take interval between l1, l2
+    phi2 = phi2 + 2*np.pi
 
     tt, pp = np.meshgrid(
-        np.linspace(theta2, theta1, points1D, endpoint=True), 
-        np.linspace(phi2 + 2*np.pi, phi1, points1D, endpoint=True)
+        np.linspace(theta2, theta1, raycasts[0], endpoint=True), 
+        np.linspace(phi2, phi1, raycasts[1], endpoint=True)
     )
 
     thetas = tt.ravel()
     phis = pp.ravel()
 
     rays = []
-    for i in range(raycasts):
-        l = np.array(spherical_to_cartesian(source_dist, thetas[i], phis[i]))
+    for i, phi in enumerate(phis):
+        l = np.array(spherical_to_cartesian(source_dist, thetas[i], phi))
         ray_pos = l + source_pos # Transform back to normal coordinates
         incident_vec = norm_vector(l)
         rays.append(np.array((ray_pos - 0.9*incident_vec, incident_vec), dtype=np.ndarray))
