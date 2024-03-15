@@ -21,9 +21,9 @@ system_extent = np.array([
 azimuth = -30
 elevation = 15
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
-apparent_inc_vec = norm_vector(incident_vec + np.array((0, -0.1, +0.1)))
+apparent_inc_vec = norm_vector(incident_vec + np.array((-0.2, 0.1, -0.5)))
 
-tilt_deg = -6
+tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
 # Create aligned model for apparent incident vector
@@ -48,12 +48,15 @@ for i, mirror in enumerate(mirrors):
     )
 
 # Creating geoemetry for raytacer
-model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
+# model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
+model = create_geometry(model, (1, 1), exp.MIRROR_RADIUS.value, exp.YLIM.value)
+
 
 # Uncomment block with Ctrl+/
 # Running raytracer for given source and system parameters
 model = raytrace_source_incidence(model, 12, incident_vec, system_extent, (60, 6000))
 # model = raytrace_uniform_incidence(model, incident_vec, beam_size=2.0, start_height=0.2, raycasts=500**2)
+print(f"Collection fraction: {calculate_collection_fraction(model)}")
 
 fig, ax = show_system(model)
 points = np.array([hstats[0], hstats[0] + 5*np.array([-0.652, 0.273, 0.707])])
@@ -66,7 +69,15 @@ ax.plot(points[:, 0], points[:, 1], points[:, 2], color='red', alpha=1)
 points = np.array([origin, apparent_inc_vec])
 ax.plot(points[:, 0], points[:, 1], points[:, 2], color='green', alpha=1)
 
+ax.scatter(receiver_pos[0], receiver_pos[1], receiver_pos[2], color="red", marker="x")
+surf = get_rectangle_surface((receiver_pos, np.array((0, 0, 1)), exp.RECEIVER_SIZE.value))
+ax.plot_trisurf(surf[:, 0], surf[:, 1], surf[:, 2], linewidth=0, color='blue', alpha=0.5)
+
 ax.axes.set_xlim3d(left=-0.6, right=0.6) 
 ax.axes.set_ylim3d(bottom=-0.6, top=0.6) 
 ax.axes.set_zlim3d(bottom=-0.6, top=0.6) 
 plt.show()
+
+
+# img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+# img.save("data/last_target_image.png")

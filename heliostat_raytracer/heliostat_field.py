@@ -70,14 +70,14 @@ def align_heliostat_field(hstats, apparent_inc_vec, receiver_pos, mirror_sep, ti
 
 def create_geometry(model, receiver_size, mirror_size, ylim=(-1, 2)):
     model['receiver_size'] = receiver_size
-    recevier_pos = model['receiver_position']
+    receiver_pos = model['receiver_position']
     mirror_norms = model['mirror_normals']
     mirrors = model['mirror_positions']
 
     # Rectangle represented by (centre pos, normal and (xsize, ysize))
     rects = []
     receiver_norm = np.array((0, 0, -1))
-    rects.append((recevier_pos, receiver_norm, receiver_size)) # target plane
+    rects.append((receiver_pos, receiver_norm, receiver_size)) # target plane
 
     # Circle represented by (center pos, normal and radius)
     circs = []
