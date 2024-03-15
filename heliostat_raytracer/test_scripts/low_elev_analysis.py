@@ -18,10 +18,12 @@ system_extent = np.array([
     np.array((-0.2, -0.5, 0.2))
 ])
 
-azimuth = -30
-elevation = 15
+azimuth = 15
+elevation = 30
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
-apparent_inc_vec = norm_vector(incident_vec + np.array((-0.2, 0.1, -0.5)))
+delta_az = 2
+delta_el = 6
+apparent_inc_vec = -1*vector_from_azimuth_elevation(azimuth + delta_az, elevation + delta_el)
 
 tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
@@ -47,17 +49,23 @@ for i, mirror in enumerate(mirrors):
         """
     )
 
-# Creating geoemetry for raytacer
-# model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
-model = create_geometry(model, (1, 1), exp.MIRROR_RADIUS.value, exp.YLIM.value)
-
-
 # Uncomment block with Ctrl+/
+# Creating geoemetry for raytacer
+model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
+# model = create_geometry(model, (1, 1), exp.MIRROR_RADIUS.value, exp.YLIM.value)
+
 # Running raytracer for given source and system parameters
-model = raytrace_source_incidence(model, 12, incident_vec, system_extent, (60, 6000))
+raycasts = (1500, 4000)
+# raycasts = (80, 1000)
+
+model = raytrace_source_incidence(model, 12, incident_vec, system_extent, raycasts)
 # model = raytrace_uniform_incidence(model, incident_vec, beam_size=2.0, start_height=0.2, raycasts=500**2)
 print(f"Collection fraction: {calculate_collection_fraction(model)}")
 
+img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+img.save("data/last_target_image.png")
+
+print("Creating 3D visualisation of model...")
 fig, ax = show_system(model)
 points = np.array([hstats[0], hstats[0] + 5*np.array([-0.652, 0.273, 0.707])])
 ax.plot(points[:, 0], points[:, 1], points[:, 2], color='orange', alpha=1)
@@ -77,7 +85,3 @@ ax.axes.set_xlim3d(left=-0.6, right=0.6)
 ax.axes.set_ylim3d(bottom=-0.6, top=0.6) 
 ax.axes.set_zlim3d(bottom=-0.6, top=0.6) 
 plt.show()
-
-
-# img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
-# img.save("data/last_target_image.png")
