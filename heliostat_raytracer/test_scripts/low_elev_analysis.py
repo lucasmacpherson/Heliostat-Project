@@ -18,10 +18,10 @@ system_extent = np.array([
     np.array((-0.2, -0.5, 0.2))
 ])
 
-azimuth = 0
-elevation = 38
+azimuth = -30
+elevation = 15
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
-apparent_inc_vec = norm_vector(incident_vec + np.array((0, 0, -0.05)))
+apparent_inc_vec = norm_vector(incident_vec + np.array((0, -0.1, +0.1)))
 
 tilt_deg = -6
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
@@ -52,13 +52,20 @@ model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value,
 
 # Uncomment block with Ctrl+/
 # Running raytracer for given source and system parameters
-model = raytrace_source_incidence(model, 12, incident_vec, system_extent, (100, 800))
+model = raytrace_source_incidence(model, 12, incident_vec, system_extent, (60, 6000))
 # model = raytrace_uniform_incidence(model, incident_vec, beam_size=2.0, start_height=0.2, raycasts=500**2)
 
 fig, ax = show_system(model)
 points = np.array([hstats[0], hstats[0] + 5*np.array([-0.652, 0.273, 0.707])])
-
 ax.plot(points[:, 0], points[:, 1], points[:, 2], color='orange', alpha=1)
+
+origin = np.array((0, 0, 0))
+points = np.array([origin, incident_vec])
+ax.plot(points[:, 0], points[:, 1], points[:, 2], color='red', alpha=1)
+
+points = np.array([origin, apparent_inc_vec])
+ax.plot(points[:, 0], points[:, 1], points[:, 2], color='green', alpha=1)
+
 ax.axes.set_xlim3d(left=-0.6, right=0.6) 
 ax.axes.set_ylim3d(bottom=-0.6, top=0.6) 
 ax.axes.set_zlim3d(bottom=-0.6, top=0.6) 

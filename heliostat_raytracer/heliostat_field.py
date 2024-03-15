@@ -32,7 +32,7 @@ def create_heliostat_field(size, layout):
     heliostats = np.array(heliostats)
     return heliostats
 
-def align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=None):
+def align_heliostat_field(hstats, apparent_inc_vec, receiver_pos, mirror_sep, tilts=None):
     receiver_pos = np.array(receiver_pos)
     mirror_norms = []
     reflected_vecs = []
@@ -40,7 +40,7 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=
 
     for i, hstat in enumerate(hstats):
         receiver_vec = vector_to_receiver(hstat, receiver_pos)
-        init_mirror_norm = calculate_mirror_normal(receiver_vec, incident_vec)
+        init_mirror_norm = calculate_mirror_normal(receiver_vec, apparent_inc_vec)
         mirrors, offset_vecs = calculate_mirror_positions(hstat, init_mirror_norm, receiver_vec, mirror_sep)
 
         for j in range(2):
@@ -50,7 +50,7 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=
                 tilt = 0
 
             elif isinstance(tilts, str) and tilts == 'ideal':
-                tilt = calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, incident_vec)
+                tilt = calculate_ideal_tilt(mirrors[j], receiver_pos, init_mirror_norm, apparent_inc_vec)
                 print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
             
             else:
@@ -58,11 +58,11 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=
 
             mirror_norm = tilt_mirror_normal(init_mirror_norm, offset_vecs[j], tilt)
             mirror_norms.append(mirror_norm)
-            reflected_vecs.append(calculate_reflection(mirror_norm, incident_vec))
+            reflected_vecs.append(calculate_reflection(mirror_norm, apparent_inc_vec))
     
     return {'heliostat_positions': hstats,
             'receiver_position': receiver_pos,
-            'incident_vector': incident_vec,
+            'apparent_incidence': apparent_inc_vec,
             'mirror_positions': np.array(mirror_positions),
             'mirror_normals': np.array(mirror_norms),
             'reflected_vectors': np.array(reflected_vecs)
@@ -92,12 +92,14 @@ def create_geometry(model, receiver_size, mirror_size, ylim=(-1, 2)):
     return model
 
 def raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height):
+    model['incident_vector'] = incident_vec
     initial_rays = generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec)
     rays = run_raytracer(model, initial_rays)
     model['rays'] = rays
     return model
 
 def raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts):
+    model['incident_vector'] = incident_vec
     initial_rays = generate_source_incidence(source_dist, incident_vec, system_extent, raycasts)
     rays = run_raytracer(model, initial_rays)
     model['rays'] = rays
