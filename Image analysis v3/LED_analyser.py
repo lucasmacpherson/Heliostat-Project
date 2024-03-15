@@ -152,7 +152,7 @@ colours = ["red", "orange", "green", "blue"]
 folder = "Image analysis v3/full data set/"
 mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
 
-plot_by_tilt(tilts, azimuthals, folder, 3, [640, 544], colours)
+#plot_by_tilt(tilts, azimuthals, folder, 3, [640, 544], colours)
 
 average = False
 normalise = True
@@ -163,8 +163,8 @@ normalise = True
 # plot_by_object_num(60, azimuthals, folder, mirr_60, 3, [640, 544], colours, normalise, average)
 
 #for simulation data
-#folder = "Image analysis v3/simages/"
-#sim_plot_by_tilt(tilts, azimuthals, folder, [512, 640], colours)
+folder = "Image analysis v3/simages/"
+sim_plot_by_tilt(tilts, azimuthals, folder, [512, 640], colours)
 
 
 
