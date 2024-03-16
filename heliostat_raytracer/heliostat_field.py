@@ -103,7 +103,7 @@ def raytrace_source_incidence(model, source_dist, incident_vec, system_extent, r
     initial_rays = generate_source_incidence(source_dist, incident_vec, system_extent, raycasts)
     rays = run_raytracer(model, initial_rays)
     model['rays'] = rays
-    return model
+    return model    
 
 def calculate_collection_fraction(model):
     raycasts = len(model['rays'])

@@ -11,3 +11,4 @@ class experimental_params(Enum):
     YLIM = (-1, 2)
     CAMERA_IMAGESIZE = (1280, 1080)
     CAMERA_PIXEL_TO_MM = 4.5
+    SOURCE_DISTANCE = 12

@@ -30,8 +30,8 @@ def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
 
     return rays
 
-def generate_source_incidence(source_dist, principle_vec, system_extent, raycasts):
-    source_pos = source_dist * -principle_vec
+def generate_source_incidence(source_dist, central_vec, system_extent, raycasts):
+    source_pos = source_dist * -central_vec
     
     # Transform into coordinates with source at (0, 0)
     l1 = system_extent[0] - source_pos
