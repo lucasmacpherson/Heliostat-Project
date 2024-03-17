@@ -37,38 +37,13 @@ def create_simplified_model(hstats: list, incident_vec: np.ndarray, receiver_pos
         'incident_angle': incident_angle
     }
 
-def efficiency_plots(eff):
-    elev0 = 45   # 45 degrees
-    azim0 = 0   # 0 degrees
-    
-    elevs = []
-    elev_effs = []
-    azims = []
-    azim_effs = []
-    for key in eff:
-        elev, azim = key
-        eff_value = eff[key]
-
-        if elev == elev0:
-            azims.append(azim)
-            azim_effs.append(eff_value)
-
-        if azim == azim0:
-            elevs.append(elev)
-            elev_effs.append(eff_value)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.scatter(elevs, elev_effs)
-    plt.show()
-
 def mphelper_simple_image(hstats, elevation, azimuth, receiver_pos, receiver_size,
-                          mirror_size, beam_size, raycasts, start_height,
+                          mirror_size, source_dist, system_extent, raycasts,
                           fname=''):
-        incident_vec = vector_from_azimuth_elevation(azimuth, elevation)
+        incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
         model = create_simplified_model(hstats, incident_vec, receiver_pos)
         model = create_geometry(model, receiver_size, mirror_size)
-        model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+        model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
         collection_frac = calculate_collection_fraction(model)
         
         if fname != '':
@@ -76,34 +51,53 @@ def mphelper_simple_image(hstats, elevation, azimuth, receiver_pos, receiver_siz
             img.save(fname)
         
         return collection_frac
-    
 
-if __name__ == "__main__":
+def realscale_simple_wrapper(elevation, azimuth):
     receiver_pos = np.array(exp.RECEIVER_POSITION.value)
     receiver_size = exp.RECEIVER_SIZE.value
     mirror_size = exp.MIRROR_RADIUS.value
     # hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
     hstats = [[0.226, 0, 0]]
 
-    raycasts = 500**2
-    beam_size = 3.0
-    start_height = 0.20
+    raycasts = (100, 2000)
+    source_dist = exp.SOURCE_DISTANCE.value
+    system_extent = np.array([
+        np.array((0.2, 0.2, -0.1)),
+        np.array((-0.2, -0.2, 0.1))
+    ])
 
+    return mphelper_simple_image(hstats, elevation, azimuth, receiver_pos, receiver_size, mirror_size,
+                                source_dist, system_extent, raycasts)
+
+def datagen_simple_collectfracs(elevations, azimuths, worker_threads=8):
+    eff = np.zeros(shape=(len(elevations), len(azimuths)))
+    
+    for i, elev in enumerate(elevations):
+        args = []
+        for j, azim in enumerate(azimuths):
+            args.append([elev, azim])
+        
+        with mp.Pool(worker_threads) as pool:
+            results = pool.starmap(realscale_simple_wrapper, args)
+
+        for j, result in enumerate(results):
+            eff[i][j] = result
+
+    return eff
+
+if __name__ == "__main__":
     elevations = np.array((15, 30, 45, 55, 60))
     azimuths = np.array((-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70))
 
-    angles = np.zeros(shape=(len(elevations), len(azimuths)))
-    for i, elevation in enumerate(elevations):
-        for j, azimuth in enumerate(azimuths):
-            incident_vec = vector_from_azimuth_elevation(azimuth, elevation)
-            model = create_simplified_model(hstats, incident_vec, receiver_pos)
-            angles[i, j] = 180/np.pi * model['incident_angle']
+    eff = datagen_simple_collectfracs(elevations, azimuths, worker_threads=8)
+    np.savetxt(eff, "data/simple_model_collect_fracs.csv", delimiter=',')
 
-    print(angles)
-    np.savetxt('data/simple_incident_angles.csv', angles, delimiter=',')
+    # angles = np.zeros(shape=(len(elevations), len(azimuths)))
+    # for i, elevation in enumerate(elevations):
+    #     for j, azimuth in enumerate(azimuths):
+    #         incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
+    #         model = create_simplified_model(hstats, incident_vec, receiver_pos)
+    #         angles[i, j] = 180/np.pi * model['incident_angle']
 
-    model = create_simplified_model(hstats, incident_vec, receiver_pos)
-    model = create_geometry(model, receiver_size, mirror_size)
-    model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
-
-    fig, ax = show_system(model)
+    # print(angles)
+    # np.savetxt('data/simple_incident_angles.csv', angles, delimiter=',')

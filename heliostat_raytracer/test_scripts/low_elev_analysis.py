@@ -18,8 +18,8 @@ system_extent = np.array([
     np.array((-0.2, -0.5, 0.2))
 ])
 
-azimuth = 0
-elevation = 30
+azimuth = -45
+elevation = 15
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
 tilt_deg = -10
@@ -51,9 +51,8 @@ for i, mirror in enumerate(mirrors):
 model = create_geometry(model, exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value, exp.YLIM.value)
 #model = create_geometry(model, (1, 1), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
-
 # Running raytracer for given source and system parameters
-model = raytrace_source_incidence(model, 12, incident_vec, system_extent, (200, 1000))
+model = raytrace_source_incidence(model, 12, incident_vec, system_extent, (200, 4000))
 # model = raytrace_uniform_incidence(model, incident_vec, beam_size=2.0, start_height=0.2, raycasts=500**2)
 print(f"Collection fraction: {calculate_collection_fraction(model)}")
 
@@ -68,9 +67,6 @@ ax.plot(points[:, 0], points[:, 1], points[:, 2], color='orange', alpha=1)
 origin = np.array((0, 0, 0))
 points = np.array([origin, incident_vec])
 ax.plot(points[:, 0], points[:, 1], points[:, 2], color='red', alpha=1)
-
-points = np.array([origin, apparent_inc_vec])
-ax.plot(points[:, 0], points[:, 1], points[:, 2], color='green', alpha=1)
 
 ax.scatter(receiver_pos[0], receiver_pos[1], receiver_pos[2], color="red", marker="x")
 surf = get_rectangle_surface((receiver_pos, np.array((0, 0, 1)), exp.RECEIVER_SIZE.value))
