@@ -18,12 +18,12 @@ system_extent = np.array([
     np.array((-0.2, -0.5, 0.2))
 ])
 
-azimuth = 0
-elevation = 30
+azimuth = -15
+elevation = 15
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
-delta_az = 4.20707842 
-delta_el = 7.57296694
+delta_az = -4
+delta_el = -10
 apparent_inc_vec = -1*vector_from_azimuth_elevation(azimuth + delta_az, elevation + delta_el)
 
 tilt_deg = -10
@@ -57,7 +57,7 @@ model = create_geometry(model, (1, 1), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
 # Running raytracer for given source and system parameters
 # raycasts = (1500, 4000)
-raycasts = (100, 800)
+raycasts = (100, 4000)
 
 model = raytrace_source_incidence(model, 12, incident_vec, system_extent, raycasts)
 # model = raytrace_uniform_incidence(model, incident_vec, beam_size=2.0, start_height=0.2, raycasts=500**2)
