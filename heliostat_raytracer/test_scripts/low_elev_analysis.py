@@ -19,7 +19,7 @@ system_extent = np.array([
 ])
 
 azimuth = 0
-elevation = 30
+elevation = 15
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
 delta_az = 0

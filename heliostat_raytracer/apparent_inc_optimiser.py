@@ -8,8 +8,6 @@ from heliostat_field import align_heliostat_field, calculate_collection_fraction
 from raytracer import generate_source_incidence, prune_rays, run_raytracer
 from experimental_params import experimental_params as exp
 
-
-# Either optimise for collection fraction (many values will be zero), or
 # increase receiver size and optimise for minimum average distance from centre
 
 def efficiency_helper(deltas, azim, elev, hstats, receiver_pos, mirror_sep, tilts, receiver_size, mirror_size, source_dist, system_extent, raycasts, save_image=False):

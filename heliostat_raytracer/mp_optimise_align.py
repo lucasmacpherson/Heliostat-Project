@@ -61,7 +61,7 @@ def datagen_angle_range(elevations, azimuths, worker_threads=8):
         with mp.Pool(worker_threads) as pool:
             results = pool.starmap(optimised_result_helper, args)
 
-        for result in results:
+        for result in results: # Does this even work?
             all_deltas[(elev, azimuths[j])] = result
             # collect_fracs[(elev, azimuths[j])] = result[1]
 
