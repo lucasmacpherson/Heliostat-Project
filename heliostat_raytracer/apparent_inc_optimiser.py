@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import optimize as opt
 
-from heliostat_raytracer.images import intensity_image
+from images import intensity_image
 from vector import cartesian_to_spherical, norm_vector, vector_from_azimuth_elevation
 
 from heliostat_field import align_heliostat_field, calculate_collection_fraction, create_geometry, mphelper_efficiency
@@ -45,5 +45,5 @@ def realscale_objective_func(deltas, azim, elev, fname=""):
 
 def get_optimized_deltas(azim, elev, bounds):
     result = opt.differential_evolution(lambda x: realscale_objective_func(x, azim, elev), 
-                                        bounds=bounds, maxiter=8, popsize=32)
+                                        bounds=bounds, maxiter=8, popsize=64)
     return result.x
