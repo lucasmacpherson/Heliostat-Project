@@ -56,6 +56,7 @@ def calculate_plane_intersection(vector_norm: np.ndarray, vector_position: np.nd
     d = vector_plane_distance(vector_norm, vector_position, plane_norm, plane_offset)
     if d is None or abs(d) < epsilon:
         return None
+        
     
     return np.array([vector_position[0] + vector_norm[0]*d, 
                      vector_position[1] + vector_norm[1]*d,

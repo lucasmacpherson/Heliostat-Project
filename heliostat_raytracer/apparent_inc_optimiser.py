@@ -33,7 +33,7 @@ def realscale_objective_func(deltas, azim, elev, fname=""):
         np.array((0.3, 0.5, -0.3)),
         np.array((-0.2, -0.5, 0.2))
     ])
-    raycasts = (200, 6000) # (100, 2000) ~ 10s per iteration -> 1 hour for 256
+    raycasts = (100, 4000) # (100, 2000) ~ 44s per iteration -> 6 hours
 
     collect_frac = efficiency_helper(deltas, azim, elev, hstats, exp.RECEIVER_POSITION.value,
                                      exp.MIRROR_SEPERATION.value, tilts,
@@ -45,5 +45,5 @@ def realscale_objective_func(deltas, azim, elev, fname=""):
 
 def get_optimized_deltas(azim, elev, bounds):
     result = opt.differential_evolution(lambda x: realscale_objective_func(x, azim, elev), 
-                                        bounds=bounds, maxiter=8, popsize=64)
+                                        bounds=bounds, maxiter=4, popsize=64)
     return result.x
