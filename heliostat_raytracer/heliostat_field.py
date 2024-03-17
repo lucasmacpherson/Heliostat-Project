@@ -110,17 +110,17 @@ def calculate_collection_fraction(model):
     tgt_plane_rays = get_rays_at_target(model)
     return len(tgt_plane_rays) / raycasts
 
-def mphelper_efficiency(hstats, incident_elev, incident_azi, receiver_pos, reflecting_width, receiver_size, mirror_size, beam_size, raycasts, start_height, tilts=None, ylim=(-1, 2)):
+def mphelper_efficiency(hstats, incident_elev, incident_azi, receiver_pos, mirror_sep, receiver_size, mirror_size, beam_size, raycasts, start_height, tilts=None, ylim=(-1, 2)):
     incident_vec = -1*vector_from_azimuth_elevation(incident_azi, incident_elev)
-    model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=tilts)
+    model = align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=tilts)
     model = create_geometry(model, receiver_size, mirror_size, ylim)
     model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
 
     return calculate_collection_fraction(model)
 
-def mphelper_efficiency_imagegen(hstats, incident_elev, incident_azi, receiver_pos, reflecting_width, receiver_size, mirror_size, source_dist, system_extent, raycasts, tilts=None, ylim=(-1, 2), fname=''):
+def mphelper_efficiency_imagegen(hstats, incident_elev, incident_azi, receiver_pos, mirror_sep, receiver_size, mirror_size, source_dist, system_extent, raycasts, tilts=None, ylim=(-1, 2), fname=''):
     incident_vec = -1*vector_from_azimuth_elevation(incident_azi, incident_elev)
-    model = align_heliostat_field(hstats, incident_vec, receiver_pos, reflecting_width, tilts=tilts)
+    model = align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=tilts)
     model = create_geometry(model, receiver_size, mirror_size, ylim)
     print(f"Raytracing system with elev={incident_elev}, azim={incident_azi}...")
     model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)

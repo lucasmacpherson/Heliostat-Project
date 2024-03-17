@@ -9,7 +9,7 @@ from experimental_params import experimental_params as exp
 
 # System dimensions
 hstat_sep = exp.HELIOSTAT_SEPERATION.value # Heliostat posts seperated by 45.2cm
-heliostat_width = exp.HELIOSTAT_WIDTH.value # Mirrors are seperated by 28.5cm
+mirror_sep = exp.MIRROR_SEPERATION.value # Mirrors are seperated by 28.5cm
 mirror_size = exp.MIRROR_RADIUS.value
 receiver_pos = exp.RECEIVER_POSITION.value
 receiver_size = exp.RECEIVER_SIZE.value
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         args = []
 
         for i, azimuth in enumerate(azimuths):
-            args.append([hstats, elevation, azimuth, receiver_pos, heliostat_width, receiver_size, 
+            args.append([hstats, elevation, azimuth, receiver_pos, mirror_sep, receiver_size, 
                         mirror_size, source_dist, system_extent, raycasts, tilts, (-1, 2),
                         f"data/images/{elevation}_{azimuth}_25Mrays_intensity.png"])
 
