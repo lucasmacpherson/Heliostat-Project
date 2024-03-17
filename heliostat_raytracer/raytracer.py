@@ -119,7 +119,7 @@ def run_raytracer(model, initial_rays, max_bounces=100):
     mirror_norms = model['mirror_normals']
 
     rays = [] # Each ray is an array of (point, direction)
-    for initial_ray in tqdm(initial_rays):
+    for initial_ray in initial_rays:
         ray = [np.array(initial_ray)]
         last_ray = initial_ray
 

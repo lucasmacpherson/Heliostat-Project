@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import optimize as opt
 
+from heliostat_raytracer.images import intensity_image
 from vector import cartesian_to_spherical, norm_vector, vector_from_azimuth_elevation
 
 from heliostat_field import align_heliostat_field, calculate_collection_fraction, create_geometry, mphelper_efficiency
@@ -11,7 +12,7 @@ from experimental_params import experimental_params as exp
 # Either optimise for collection fraction (many values will be zero), or
 # increase receiver size and optimise for minimum average distance from centre
 
-def efficiency_helper(deltas, azim, elev, hstats, receiver_pos, mirror_sep, tilts, receiver_size, mirror_size, source_dist, system_extent, raycasts):
+def efficiency_helper(deltas, azim, elev, hstats, receiver_pos, mirror_sep, tilts, receiver_size, mirror_size, source_dist, system_extent, raycasts, save_image=False):
     apparent_inc_vec = -1*vector_from_azimuth_elevation(azim + deltas[0], elev + deltas[1])
     incident_vec = -1*vector_from_azimuth_elevation(azim, elev)
 
@@ -24,7 +25,7 @@ def efficiency_helper(deltas, azim, elev, hstats, receiver_pos, mirror_sep, tilt
 
     return collect_frac
 
-def realscale_objective_func(deltas, azim, elev):
+def realscale_objective_func(deltas, azim, elev, fname=""):
     hstats = [np.array([0.226, -0.226, 0]), np.array([0.226, 0.226, 0])]
     tilt_deg = -10
     tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
@@ -32,18 +33,17 @@ def realscale_objective_func(deltas, azim, elev):
         np.array((0.3, 0.5, -0.3)),
         np.array((-0.2, -0.5, 0.2))
     ])
-    raycasts = (100, 2000) # (100, 2000) ~ 10s per iteration -> 1 hour for 256
+    raycasts = (100, 800) # (100, 2000) ~ 10s per iteration -> 1 hour for 256
 
     collect_frac = efficiency_helper(deltas, azim, elev, hstats, exp.RECEIVER_POSITION.value,
                                      exp.MIRROR_SEPERATION.value, tilts,
                                      exp.RECEIVER_SIZE.value, exp.MIRROR_RADIUS.value,
                                      exp.SOURCE_DISTANCE.value,
-                                     system_extent, raycasts)
+                                     system_extent, raycasts, save_image=True)
     
     return -collect_frac
 
-def get_optimized_deltas(azim, elev):
-    bounds = [(-45, 45), (-45, 45)]
+def get_optimized_deltas(azim, elev, bounds):
     result = opt.differential_evolution(lambda x: realscale_objective_func(x, azim, elev), 
-                                        bounds=bounds, maxiter=128)
+                                        bounds=bounds, maxiter=8, popsize=32)
     return result.x
