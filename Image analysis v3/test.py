@@ -1,30 +1,79 @@
-from edge_detector_v3 import *
+# from edge_detector_v3 import *
+# from LED_analyser import quick_plot
 import pickle
+import numpy as np
+import matplotlib.pyplot as plt
 
 
+colours = ["red", "orange", "green", "blue"]
 with open('Image analysis v3/16Mrays_last.pkl', 'rb') as f:
     data = pickle.load(f)
 
-fig1 = plt.figure()
-colours = ["red", "orange", "green", "blue"]
+print(data)
 tilts = np.arange(15, 75, 15)
 azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
 for i, tilt in enumerate(tilts):
     for azim in azimuthals:
+        plt.scatter(azim, data[tilt, azim], label = str(tilt), color = colours[i])
 
-        col = colours[i]
-
-        collection = data[tilt, azim]
-
-        plt.scatter(azim, collection, color = col, label = str(tilt))
-
-        handles, labels = plt.gca().get_legend_handles_labels()
-        by_label = dict(zip(labels, handles))
-        plt.legend(by_label.values(), by_label.keys())
+handles, labels = plt.gca().get_legend_handles_labels()
+by_label = dict(zip(labels, handles))
+plt.legend(by_label.values(), by_label.keys())
 
 plt.show()
 
+# fig1 = plt.figure()
+# colours = ["red", "orange", "green", "blue"]
+
+# norms = [690122.0, 1066143.7, 1078526.0, 1277268.3]
+# incident_angles = np.loadtxt("simple_incident_angles.csv", delimiter = ",")
+
+
+# for i, tilt in enumerate(tilts):
+#     cos = np.cos(incident_angles[i+1][1:]*np.pi/360)
+#     quick_plot(tilt, azimuthals, cos, norms[i])
+
+#     if data[tilt, 0] != 0:
+#         norm = norms[i] * 1/data[tilt, 0] 
+    
+#     else: norm = norms[i]
+
+#     for azim in azimuthals:
+
+#         col = colours[i]
+
+#         collection = data[tilt, azim] * norm
+
+#         plt.scatter(azim, collection, color = col, label = str(tilt))
+
+
+#         handles, labels = plt.gca().get_legend_handles_labels()
+#         by_label = dict(zip(labels, handles))
+#         plt.legend(by_label.values(), by_label.keys())
+
+#     plt.title((str(tilt) + " Tilt"))
+#     plt.show()
+
+
+# data = np.loadtxt("used_incident_angles.csv", delimiter="," )
+
+# print(data[1][1:])
+ 
+# print(len(data))
+# colours = ["red", "orange", "green", "blue"]
+# plt.figure(figsize=(8, 6))
+
+# for i in range(1, len(data)):
+#     plt.scatter(data[0][1:], data[i][1:]/2, label = (str(int(data[i][0])) + "$^\circ$ elevational tilt"), color = colours[i-1])
+
+# plt.legend(loc = "lower center")
+# plt.ylim(bottom = 25)
+# plt.xlabel("Azimuthal tilt ($^\circ$)", fontsize = 12)
+# plt.ylabel("Resultant Angle ($^\circ$)", fontsize = 12)
+
+# plt.savefig("Image analysis v3/Final graphs/Angle demonstrator.png", dpi = 1500)
+# plt.show()
 
 
 # # data set 1 variables
