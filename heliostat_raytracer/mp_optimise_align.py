@@ -34,7 +34,7 @@ def raytrace_highres_system(apparent_vec, incident_vec, fname=""):
     return collect_frac
 
 def optimised_result_helper(azim, elev, fname=""):
-    print(f"Finding deltas for a={azim}, B={elev}...")
+    print(f"[a={azim}, B={elev}]: Finding deltas...")
     bounds = [(-45, 45), (-45, 45)]
     deltas = get_optimized_deltas(azim, elev, bounds)
     
@@ -45,6 +45,7 @@ def optimised_result_helper(azim, elev, fname=""):
     # collect_frac = raytrace_highres_system(apparent_inc_vec, incident_vec, fname)
     # print(f"Image saved for a={azim}, B={elev}...")
 
+    print(f"[a={azim}, B={elev}]: Optimised deltas are {deltas}")
     return deltas
 
 def datagen_angle_range(elevations, azimuths, worker_threads=8):

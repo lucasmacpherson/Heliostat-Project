@@ -45,5 +45,5 @@ def realscale_objective_func(deltas, azim, elev, fname=""):
 
 def get_optimized_deltas(azim, elev, bounds):
     result = opt.differential_evolution(lambda x: realscale_objective_func(x, azim, elev), 
-                                        bounds=bounds, maxiter=8, popsize=64)
+                                        bounds=bounds, maxiter=4, popsize=48)
     return result.x
