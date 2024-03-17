@@ -18,19 +18,18 @@ system_extent = np.array([
     np.array((-0.2, -0.5, 0.2))
 ])
 
-azimuth = -70
-elevation = 60
+azimuth = 0
+elevation = 30
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
-apparent_inc_vec = norm_vector(incident_vec + np.array((0, 0, 0)))
 
 tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
 # Create aligned model for apparent incident vector
-model = align_heliostat_field(hstats, apparent_inc_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts=tilts)
+model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts=tilts)
 
 print(f"Central incident vector: {incident_vec.round(3)} (alpha: {azimuth}, beta: {elevation})")
-print(f"Apparent incident vector: {apparent_inc_vec.round(3)}")
+print(f"Apparent incident vector: {incident_vec.round(3)}")
 receiver_pos = model['receiver_position']
 for i, hstat in enumerate(hstats):
     print(f"""Heliostat {i}: (Position: {hstat.round(3)})

@@ -12,8 +12,9 @@ def calculate_mirror_normal(receiver_vec, incident_vec):
     """
     Calculate the mirror normal vector required for reflection of incident rays to the target
     """
+    dproduct = np.dot(-incident_vec, receiver_vec)
     xproduct = np.cross(-incident_vec, receiver_vec)
-    theta = np.arcsin(magnitude(xproduct))
+    theta = np.arccos(dproduct)
     if magnitude(xproduct != 0):
         R = calculate_rotation_matrix(xproduct/magnitude(xproduct), theta/2)
     else:
