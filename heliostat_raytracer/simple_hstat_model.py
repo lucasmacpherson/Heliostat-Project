@@ -38,12 +38,13 @@ def create_simplified_model(hstats: list, incident_vec: np.ndarray, receiver_pos
     }
 
 def mphelper_simple_image(hstats, elevation, azimuth, receiver_pos, receiver_size,
-                          mirror_size, source_dist, system_extent, raycasts,
+                          mirror_size, beam_size, start_height, raycasts,
                           fname=''):
         incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
         model = create_simplified_model(hstats, incident_vec, receiver_pos)
         model = create_geometry(model, receiver_size, mirror_size)
-        model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
+        model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+        # model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
         collection_frac = calculate_collection_fraction(model)
         
         if fname != '':
@@ -65,9 +66,13 @@ def realscale_simple_wrapper(elevation, azimuth):
         np.array((0.2, 0.2, -0.1)),
         np.array((-0.2, -0.2, 0.1))
     ])
+    
+    raycasts = 5000**2
+    beam_size = 3.0
+    start_height = 0.2
 
     return mphelper_simple_image(hstats, elevation, azimuth, receiver_pos, receiver_size, mirror_size,
-                                source_dist, system_extent, raycasts)
+                                beam_size, start_height, raycasts)
 
 def datagen_simple_collectfracs(elevations, azimuths, worker_threads=8):
     eff = np.zeros(shape=(len(elevations), len(azimuths)))
@@ -90,7 +95,7 @@ if __name__ == "__main__":
     azimuths = np.array((-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70))
 
     eff = datagen_simple_collectfracs(elevations, azimuths, worker_threads=8)
-    np.savetxt(eff, "data/simple_model_collect_fracs.csv", delimiter=',')
+    np.savetxt("data/simple_collect_fracs_16M.csv", eff, delimiter=',')
 
     # angles = np.zeros(shape=(len(elevations), len(azimuths)))
     # for i, elevation in enumerate(elevations):
