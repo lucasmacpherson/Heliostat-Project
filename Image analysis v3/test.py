@@ -6,19 +6,31 @@ import matplotlib.pyplot as plt
 
 
 colours = ["red", "orange", "green", "blue"]
-with open('Image analysis v3/16Mrays_last.pkl', 'rb') as f:
+with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
     data = pickle.load(f)
 
-print(data)
+mirr_nums = np.loadtxt("sim_mirr_numbs.csv", delimiter=",")
+# print(mirr_nums[1][1])
+
 tilts = np.arange(15, 75, 15)
 azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
 for i, tilt in enumerate(tilts):
-    for azim in azimuthals:
-        plt.scatter(azim, data[tilt, azim], label = str(tilt), color = colours[i])
+    for j, azim in enumerate(azimuthals):
+        mirr_num = mirr_nums[j+1][i+1]
+        print(mirr_num)
+        y = data[tilt, azim] * 4/mirr_num
+
+        if mirr_num == 4:
+            plt.scatter(azim, data[tilt, azim], label = str(tilt) + " unscaled", color = colours[i])
+
+        else:
+            plt.scatter(azim, data[tilt, azim], label = str(tilt) + " unscaled", marker = "x", color = colours[i])
+            plt.scatter(azim, y, label = str(tilt) + " scaled", color = colours[i])
 
 handles, labels = plt.gca().get_legend_handles_labels()
 by_label = dict(zip(labels, handles))
+#plt.ylim(top = 0.0005)
 plt.legend(by_label.values(), by_label.keys())
 
 plt.show()

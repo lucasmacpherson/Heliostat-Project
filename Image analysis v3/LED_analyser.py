@@ -1,5 +1,7 @@
 from edge_detector_v3 import *
 import matplotlib.cm as cm
+import pickle
+import seaborn as sns
 
 
 def plot_by_tilt(tilts, azimuthals, folder, iterations, target_loc, colours):
@@ -206,7 +208,7 @@ def normalised_tilt_by_azim(tilt, azimuthals, cos, norm, object_num, colors, int
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys())
 
-    plt.xlabel("Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
 
     if save:
@@ -215,7 +217,7 @@ def normalised_tilt_by_azim(tilt, azimuthals, cos, norm, object_num, colors, int
     plt.show()
 
 def all_averaged_tilt_by_azim(tilts, azimuthals, coss, norms, object_nums, colors, int_factor = 1.4e6, fontsize = 12):
-    plt.figure(figsize=(10, 6), dpi=100)
+    plt.figure(figsize=(8, 5), dpi=100)
 
     for i, tilt in enumerate(tilts):
         data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " data.csv"), delimiter=",")
@@ -241,16 +243,17 @@ def all_averaged_tilt_by_azim(tilts, azimuthals, coss, norms, object_nums, color
         err = np.array(err)*0.8
             
         plt.errorbar(azimuthals, y, yerr = err, xerr = 4, label = str(tilt) + " data", color = colors[i], marker = ".", ls = 'none', capsize = 3, alpha = 0.7)
-        plt.plot(azimuthals, cos*norm_ex, label = str(tilt) + " Prediction", color = colors[i])
+        plt.plot(azimuthals, cos*norm_ex, label = str(tilt) + " Cosine", color = colors[i])
     
     #plt.ylim(0.4, 1.2)
     
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0)
 
-    plt.xlabel("Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
-    
-    plt.savefig(("Image analysis v3/Final graphs/All averaged azimuth by tilt graph.png"))
+    plt.tight_layout()
+
+    plt.savefig(("Image analysis v3/Final graphs/All averaged azimuth by tilt graph.png"), dpi = 1500)
     plt.show()
 
 def averaged_tilt_by_azim(tilt, azimuthals, cos, norm, object_num, colors, int_factor = 1.4e6, fontsize = 12):
@@ -281,7 +284,7 @@ def averaged_tilt_by_azim(tilt, azimuthals, cos, norm, object_num, colors, int_f
 
     else: plt.legend(loc = "lower center")
 
-    plt.xlabel("Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
     
     plt.savefig(("Image analysis v3/Final graphs/" + str(tilt) + " averaged azimuth by tilt graph.png"), dpi = 1500)
@@ -318,10 +321,135 @@ def sep(tilts, azimuthals, colors, average = False):
             plt.plot([-70, 70], [total_mean, total_mean], color = colors[i], linestyle = "-")
 
 
-    plt.xlabel("Azimuthal tilt ($^\circ$)")
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)")
     plt.ylabel("Separation of CoM from target (cm)")
     plt.legend()
     plt.show()
+
+def averaged_tilt_with_sim(tilt, azimuthals, cos, norm, object_num, colors, sim_data, sim_num, tilt_index, int_factor = 1.4e6, fontsize = 12, scale = True):
+
+    data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " data.csv"), delimiter=",")
+    norm_ex = norm * 1/cos[5] * 1/int_factor
+    data = data.T
+
+    intensities = data[1]/int_factor
+    azimuths = data[0]
+    y = []
+    err = []
+    sim_ys = []
+
+    for j, azim in enumerate(azimuthals):
+        a = intensities[(j*3)] * (4/object_num[(j*3)])
+        b = intensities[(j*3 + 1)] * (4/object_num[(j*3 + 1)])
+        c = intensities[(j*3 + 2)] * (4/object_num[(j*3 + 2)])
+        y.append(np.mean([a,b,c]))
+        err.append(np.std([a,b,c]))
+
+        mirr_num = sim_num[j+1][tilt_index+1]
+
+        if scale:
+            sim_y = sim_data[tilt, azim] * 4/mirr_num
+        
+        else: sim_y = sim_data[tilt, azim]
+        sim_ys.append(sim_y)
+        
+    sim_ys = np.array(sim_ys)*y[5]/sim_ys[5]
+    
+    err = np.array(err)*0.8
+        
+    plt.errorbar(azimuthals, y, yerr = err, xerr = 4, label = str(tilt) + " data", color = "blue", marker = "o", ls = 'none', capsize = 3)
+    plt.plot(azimuthals, cos*norm_ex, label = "Cosine Prediction", marker = ".", color = "m")
+    plt.plot(azimuthals, sim_ys, label = "Scaled sim. data", marker = "^", color = "red", ls = "none")
+
+    if tilt < 40:
+        plt.legend(loc = "upper center") 
+
+    else: plt.legend(loc = "lower center")
+
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
+    
+    plt.savefig(("Image analysis v3/Final graphs/" + str(tilt) + " averaged azimuth by tilt graph.png"), dpi = 1500)
+    plt.show()
+
+def normalised_tilt_with_sim(tilt, azimuthals, cos, norm, object_num, colors, sim_data, int_factor = 1.4e6, fontsize = 12):
+    data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " data.csv"), delimiter=",")
+    norm_ex = norm * 1/cos[5] * 1/int_factor
+    data = data.T
+
+    intensities = data[1]/int_factor
+    azimuths = data[0]
+    sim_ys = []
+    avg = []
+
+    for i, num in enumerate(object_num):
+        if i == 15 or i == 16 or i ==17:
+            avg.append(intensities[i])
+
+        if num == 4:
+            plt.scatter(azimuths[i], intensities[i], label = "Unscaled data", marker = "o", color = colors[0])
+
+        elif num != 4:
+            plt.scatter(azimuths[i], intensities[i], label = "Unscaled data", marker = 'o', color = colors[0])
+            plt.scatter(azimuths[i], intensities[i]*4/num, label = "Scaled data", marker = "x", color = colors[0], alpha = 0.7)
+
+    
+    for azim in azimuthals:
+        sim_y = sim_data[tilt, azim]
+        sim_ys.append(sim_y) 
+
+    sim_ys = np.array(sim_ys)*np.mean(avg)/sim_ys[5]
+    plt.scatter(azimuthals, sim_ys, label = "Simulation data", marker = "^", color = "red")
+
+    plt.plot(azimuthals, cos*norm_ex, label = "Cosine Prediction", color = "m")
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+
+    if tilt < 40:
+        plt.legend(by_label.values(), by_label.keys(), loc = "upper center")
+
+    else:
+        plt.legend(by_label.values(), by_label.keys(), loc = "lower center")
+
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
+
+    plt.savefig(("Image analysis v3/Final graphs/" + str(tilt) + " azimuth by tilt graph w sim.png"), dpi = 1500)
+
+    plt.show()
+
+def heatmap(tilts, azimuthals):
+
+    map = []
+    for tilt in tilts:
+        data = np.loadtxt(("Image analysis v3/" + str(tilt) + " norm data.csv"), delimiter = ",") 
+        data = data.T
+        intensities = data[1]/1.4e6
+        y = np.mean(intensities.reshape(-1, 3), axis = 1)
+        map.append(y)
+
+    az_labs = ["-70", "-60", "-45", "-30", "-15", "0", "15", "30", "45", "60", "70"]
+    ti_labs = ["15", "30", "45", "60"]
+        
+    map = np.array(map)
+    sns.heatmap(map, xticklabels=az_labs, yticklabels=ti_labs)
+
+    
+    # print()
+    # print(az_labs)
+    # print(ti_labs)
+
+    # ax.set_xticks(np.arange(len(azimuthals)), labels = az_labs)
+    # ax.set_yticks(np.arange(len(tilts)), labels = ti_labs)
+    # cbar.ax.set_ylabel("Azimuthal tilt ($^\circ$)", rotation=-90, va="bottom")
+    # ax._label(r"Elevational tilt ($^\circ$)")
+    # ax.xlabel("Azimuthal tilt ($^\circ$)")
+    plt.savefig("Image analysis v3/Final graphs/heatmap.png", dpi= 1000)
+    plt.show()
+
+
+
 
 norms = [690122.0, 1066143.7, 1078526.0, 1277268.3]
 norm_15, norm_30, norm_45, norm_60 = norms[0], norms[1], norms[2], norms[3]
@@ -345,14 +473,27 @@ cos_all = [cos_15, cos_30, cos_45, cos_60]
 # sep(tilts, azimuthals, colours)
 
 #for full data set
-folder = "Image analysis v3/full data set/"
-mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
-mirr_all = [mirr_15, mirr_30, mirr_45, mirr_60]
+# folder = "Image analysis v3/full data set/"
+# mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
+# mirr_all = [mirr_15, mirr_30, mirr_45, mirr_60]
+# print(len(mirr_15))
+
+# with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
+#     sim_data = pickle.load(f)
+
+# sim_num = np.loadtxt("sim_mirr_numbs.csv", delimiter=",")
+
+
 
 # normalised_tilt_by_azim(15, azimuthals, cos_15, norm_15, mirr_15, colors = ['blue', 'green'], save = True)
 # normalised_tilt_by_azim(30, azimuthals, cos_30, norm_30, mirr_30, colors = ['blue', 'green'], save = True)
 # normalised_tilt_by_azim(45, azimuthals, cos_45, norm_45, mirr_45, colors = ['blue', 'green'], save = True)
 #normalised_tilt_by_azim(60, azimuthals, cos_60, norm_60, mirr_60, colors = ['blue', 'green'], save = True)
+
+#normalised_tilt_with_sim(15, azimuthals, cos_15, norm_15, mirr_15, ['blue', 'green'], sim_data)
+# normalised_tilt_with_sim(30, azimuthals, cos_30, norm_30, mirr_30, ['blue', 'green'], sim_data)
+# normalised_tilt_with_sim(45, azimuthals, cos_45, norm_45, mirr_45, ['blue', 'green'], sim_data)
+# normalised_tilt_with_sim(60, azimuthals, cos_60, norm_60, mirr_60, ['blue', 'green'], sim_data)
  
 col = "blue"
 # averaged_tilt_by_azim(15, azimuthals, cos_15, norm_15, mirr_15, colors = [col])
@@ -360,9 +501,17 @@ col = "blue"
 # averaged_tilt_by_azim(45, azimuthals, cos_45, norm_45, mirr_45, colors = [col])
 # averaged_tilt_by_azim(60, azimuthals, cos_60, norm_60, mirr_60, colors = [col])
 
-#sep(tilts, azimuthals, colours, average = True)
 
-#all_averaged_tilt_by_azim(tilts, azimuthals, cos_all, norms, mirr_all, colors = colours)
+# averaged_tilt_with_sim(15, azimuthals, cos_15, norm_15, mirr_15, [col], sim_data, sim_num, 0)
+# averaged_tilt_with_sim(30, azimuthals, cos_30, norm_30, mirr_30, [col], sim_data, sim_num, 1)
+# averaged_tilt_with_sim(45, azimuthals, cos_45, norm_45, mirr_45, [col], sim_data, sim_num, 2)
+# averaged_tilt_with_sim(60, azimuthals, cos_60, norm_60, mirr_60, [col], sim_data, sim_num, 3)
+
+# sep(tilts, azimuthals, colours, average = True)
+
+all_averaged_tilt_by_azim(tilts, azimuthals, cos_all, norms, mirr_all, colors = colours)
+
+# heatmap(tilts, azimuthals)
 
 # average = False
 # normalise = False
@@ -374,8 +523,8 @@ col = "blue"
 # plot_by_object_num(60, azimuthals, folder, mirr_60, 3, [640, 544], colours, normalise, average)
 
 #for simulation data
-folder = "Image analysis v3/simages/"
-sim_plot_by_tilt(tilts, azimuthals, folder, [512, 640], colours)
+# folder = "raytracer_data-18.03/images/"
+# sim_plot_by_tilt(tilts, azimuthals, folder, [512, 640], colours)
 
 
 
