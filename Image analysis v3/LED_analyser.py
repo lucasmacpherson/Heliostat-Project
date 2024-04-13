@@ -44,9 +44,7 @@ def plot_by_tilt(tilts, azimuthals, folder, iterations, target_loc, colours):
                 ax2.set_title("Pixels illuminated")
 
 
-    # plt.show()
-
-def plot_by_object_num(tilt, azimuthals, folder: str, mirror_numbers, iterations: int, target_loc, colours, normalise = False, average = False):
+def plot_by_object_num(tilt, azimuthals, folder: str, mirror_numbers, iterations: int, target_loc, colours, normalise = False, average = False, total_mirrs = 4):
     fig, (ax1, ax2) = plt.subplots(1, 2)
     ints = []
     areas = []
@@ -82,10 +80,14 @@ def plot_by_object_num(tilt, azimuthals, folder: str, mirror_numbers, iterations
             # im.imsave((folder + "/binary images/" + filename[len(folder):]), binary.astype(float))
             plt.imsave((folder + "/binary images/" + filename[len(folder):]), binary, cmap=cm.gray)
 
-            row = j*3 + iteration
+            row = j*iterations + iteration
             num_objs = int(mirror_numbers[row])
 
-            col = colours[num_objs-1]
+            if num_objs > 4:
+                vals = num_objs - 4
+            else: vals = num_objs
+    
+            col = colours[vals - 1]
 
             total_intensity, pixels_illuminated, separation, variance = image_data_extractor(binary, removed, target_loc)
             seps.append(separation)
@@ -96,9 +98,9 @@ def plot_by_object_num(tilt, azimuthals, folder: str, mirror_numbers, iterations
                 normalisation.append(total_intensity)
 
             if normalise:
-                if num_objs != 4:
-                    total_intensity = total_intensity * 4/(num_objs)
-                    pixels_illuminated = pixels_illuminated * 4/(num_objs)
+                if num_objs != total_mirrs:
+                    total_intensity = total_intensity * total_mirrs/(num_objs)
+                    pixels_illuminated = pixels_illuminated * total_mirrs/(num_objs)
 
             ints.append(total_intensity)
             areas.append(pixels_illuminated)
@@ -129,16 +131,16 @@ def plot_by_object_num(tilt, azimuthals, folder: str, mirror_numbers, iterations
 
     # data = np.array([azims, ints, areas, seps, vars])
     # if normalise:
-    #     np.savetxt(("Image analysis v3/"+ str(tilt) + " norm data.csv"), data.T, delimiter=",")
+    #     np.savetxt(("Image analysis v3/"+ str(tilt) + " " + str(total_mirrs) + " norm data.csv"), data.T, delimiter=",")
 
     # else:
-    #     np.savetxt(("Image analysis v3/"+ str(tilt) + " data.csv"), data.T, delimiter=",")
+    #     np.savetxt(("Image analysis v3/"+ str(tilt) + " " + str(total_mirrs) + " data.csv"), data.T, delimiter=",")
     # #plt.show()
     
     # print(normalisation)
     # norm = np.mean(normalisation)
     
-    #return norm
+    # return norm
 
 def sim_plot_by_tilt(tilts, azimuthals, folder, target_loc, colours):
     fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -448,11 +450,35 @@ def heatmap(tilts, azimuthals):
     plt.savefig("Image analysis v3/Final graphs/heatmap.png", dpi= 1000)
     plt.show()
 
+def plot_eight_and_four(tilt, int_factor = 1.4e6):
+    four_data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " norm data.csv"), delimiter = ",")
+    eight_data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter = ",")
 
+    four_data = four_data.T
+    eight_data = eight_data.T
 
+    four_intensities = four_data[1]/int_factor
+    eight_intensities = eight_data[1]/(int_factor*2)
+
+    four_short = np.mean(four_intensities.reshape(-1, 3), axis=1)
+
+    print(four_short)
+
+    four_azim = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
+    eight_azim = [-30, 0, 15, 30, 45, 60, 70]
+    
+    plt.scatter(four_azim, four_short, color = "red", label = "Four")
+    plt.scatter(eight_azim, eight_intensities, color = "blue", label = "Eight")
+
+    plt.legend()
+    plt.xlabel("Azimuthals")
+    plt.ylabel("Intensity")
+    plt.show()
 
 norms = [690122.0, 1066143.7, 1078526.0, 1277268.3]
 norm_15, norm_30, norm_45, norm_60 = norms[0], norms[1], norms[2], norms[3]
+
+norms_8 = [1729972, 2110938, 2451893, 2738462]
 
 tilts = np.arange(15, 75, 15)
 azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
@@ -473,8 +499,8 @@ cos_all = [cos_15, cos_30, cos_45, cos_60]
 # sep(tilts, azimuthals, colours)
 
 #for full data set
-# folder = "Image analysis v3/full data set/"
-# mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
+folder = "Image analysis v3/full data set/"
+mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
 # mirr_all = [mirr_15, mirr_30, mirr_45, mirr_60]
 # print(len(mirr_15))
 
@@ -482,6 +508,24 @@ cos_all = [cos_15, cos_30, cos_45, cos_60]
 #     sim_data = pickle.load(f)
 
 # sim_num = np.loadtxt("sim_mirr_numbs.csv", delimiter=",")
+
+#try new data set
+folder_8 = "Image analysis v3/4 heliostat 8_04/"
+# plot_by_tilt(tilts, [-30, 0, 15, 30, 45, 60, 70], folder_8, 1, [640, 544], colours)
+# plt.show()
+
+
+m8_15 = [8,8,8,8,8,6,6]
+m8_30 = [8,8,7,7,7,7,6]
+m8_45 = [8,8,8,7,7,6,6]
+m8_60 = [7,8,8,8,7,7,6]
+
+plot_eight_and_four(60)
+
+# plot_by_object_num(15, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_15, 1, [744,564], colours, normalise = True, total_mirrs= 8)
+# plot_by_object_num(30, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_30, 1, [744,564], colours, normalise = True, total_mirrs= 8)
+# plot_by_object_num(45, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_45, 1, [744,564], colours, normalise = True, total_mirrs= 8)
+# plot_by_object_num(60, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_60, 1, [744,564], colours, normalise = True, total_mirrs= 8)
 
 
 
@@ -509,14 +553,14 @@ col = "blue"
 
 # sep(tilts, azimuthals, colours, average = True)
 
-all_averaged_tilt_by_azim(tilts, azimuthals, cos_all, norms, mirr_all, colors = colours)
+#all_averaged_tilt_by_azim(tilts, azimuthals, cos_all, norms, mirr_all, colors = colours)
 
 # heatmap(tilts, azimuthals)
 
 # average = False
 # normalise = False
 
-# plot_by_object_num(60, azimuthals, folder, mirr_60, 3, [640, 544], colours, normalise, average)
+#plot_by_object_num(15, azimuthals, folder, mirr_15, 3, [640, 544], colours, True, False)
 # plt.show()
 # plot_by_object_num(30, azimuthals, folder, mirr_30, 3, [640, 544], colours, normalise, average)
 # plot_by_object_num(45, azimuthals, folder, mirr_45, 3, [640, 544], colours, normalise, average)

@@ -3,37 +3,44 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import skimage.io as im
+
+# test = im.imread("Image analysis v3/4 heliostat 8_04/60_70_0.png")
+# plt.imshow(test, norm = "linear")
+# plt.show()
+
+print(f"Calculated for latitude {12}/{8}")
 
 
-colours = ["red", "orange", "green", "blue"]
-with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
-    data = pickle.load(f)
+# colours = ["red", "orange", "green", "blue"]
+# with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
+#     data = pickle.load(f)
 
-mirr_nums = np.loadtxt("sim_mirr_numbs.csv", delimiter=",")
-# print(mirr_nums[1][1])
+# mirr_nums = np.loadtxt("sim_mirr_numbs.csv", delimiter=",")
+# # print(mirr_nums[1][1])
 
-tilts = np.arange(15, 75, 15)
-azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
+# tilts = np.arange(15, 75, 15)
+# azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
-for i, tilt in enumerate(tilts):
-    for j, azim in enumerate(azimuthals):
-        mirr_num = mirr_nums[j+1][i+1]
-        print(mirr_num)
-        y = data[tilt, azim] * 4/mirr_num
+# for i, tilt in enumerate(tilts):
+#     for j, azim in enumerate(azimuthals):
+#         mirr_num = mirr_nums[j+1][i+1]
+#         print(mirr_num)
+#         y = data[tilt, azim] * 4/mirr_num
 
-        if mirr_num == 4:
-            plt.scatter(azim, data[tilt, azim], label = str(tilt) + " unscaled", color = colours[i])
+#         if mirr_num == 4:
+#             plt.scatter(azim, data[tilt, azim], label = str(tilt) + " unscaled", color = colours[i])
 
-        else:
-            plt.scatter(azim, data[tilt, azim], label = str(tilt) + " unscaled", marker = "x", color = colours[i])
-            plt.scatter(azim, y, label = str(tilt) + " scaled", color = colours[i])
+#         else:
+#             plt.scatter(azim, data[tilt, azim], label = str(tilt) + " unscaled", marker = "x", color = colours[i])
+#             plt.scatter(azim, y, label = str(tilt) + " scaled", color = colours[i])
 
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = dict(zip(labels, handles))
-#plt.ylim(top = 0.0005)
-plt.legend(by_label.values(), by_label.keys())
+# handles, labels = plt.gca().get_legend_handles_labels()
+# by_label = dict(zip(labels, handles))
+# #plt.ylim(top = 0.0005)
+# plt.legend(by_label.values(), by_label.keys())
 
-plt.show()
+# plt.show()
 
 # fig1 = plt.figure()
 # colours = ["red", "orange", "green", "blue"]
