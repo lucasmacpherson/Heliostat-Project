@@ -58,10 +58,9 @@ def align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=
                 tilt = tilts[idx]
 
             mirror_norm = tilt_mirror_normal(init_mirror_norm, offset_vecs[j], tilt)
-            # print(f"mirror {idx} tilted by {tilt * 180/np.pi}")
             mirror_norms.append(mirror_norm)
             reflected_vecs.append(calculate_reflection(mirror_norm, incident_vec))
-            ideal_tilts.append(ideal_tilt)
+            ideal_tilts.append(ideal_tilt * 180/np.pi) # Convert ideal tilt to degrees
             mirror_thetas.append(angle_between_deg(-incident_vec, vector_to_receiver(mirrors[j], receiver_pos)))
     
     return {'heliostat_positions': hstats,
