@@ -5,6 +5,7 @@ import sys, os
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
+from heliostat_raytracer.hstat import calculate_collection_fraction, raytrace_uniform_incidence
 from heliostat_raytracer.model.heliostat_field import *
 from heliostat_raytracer.output.plotting import *
 from heliostat_raytracer.output.images import *
@@ -33,7 +34,7 @@ incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts='ideal')
+model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts=tilts)
 model = create_geometry(model, (0.5, 0.5), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
 raycasts = 100**2

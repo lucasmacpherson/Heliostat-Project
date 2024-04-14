@@ -15,11 +15,25 @@ def norm_vector(vector: np.ndarray):
 def distance(vec1: np.ndarray, vec2: np.ndarray):
     return magnitude(vec2 - vec1)
 
-def calculate_reflection(mirror_norm, incident_vec):
+def calculate_reflection(mirror_norm: np.ndarray, incident_vec: np.ndarray):
     """
     Calculate the normalised direction vector of the reflected ray
     """
     return norm_vector(np.array(incident_vec - 2*mirror_norm.dot(incident_vec.dot(mirror_norm))))
+
+def angle_between(vec1: np.ndarray, vec2: np.ndarray):
+    """
+    Calculate the angle in radians between two vectors using the dot product
+    """
+    dproduct = np.dot(vec1, vec2)
+    theta = np.arccos(dproduct/(magnitude(vec1) * magnitude(vec2)))
+    return theta
+
+def angle_between_deg(vec1: np.ndarray, vec2: np.ndarray):
+    """
+    Calculate the angle in degrees between two vectors using the dot product
+    """
+    return angle_between(vec1, vec2) * 180 / np.pi
 
 def calculate_rotation_matrix(u: np.ndarray, theta):
     # Source: https://stackoverflow.com/questions/17763655/rotation-of-a-point-in-3d-about-an-arbitrary-axis-using-python

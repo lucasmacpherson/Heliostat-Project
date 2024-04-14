@@ -1,6 +1,7 @@
 import numpy as np
 
-from heliostat_raytracer.raytracing.vector import *
+from heliostat_raytracer.raytracing.vector import calculate_plane_intersection, calculate_reflection, calculate_rotation_matrix, magnitude, norm_vector
+
 
 def vector_to_receiver(hstat, recevier) -> np.ndarray:
     """

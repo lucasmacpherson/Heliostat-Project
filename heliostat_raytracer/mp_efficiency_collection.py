@@ -3,8 +3,8 @@ import numpy as np
 import multiprocessing as mp
 import pickle as pkl
 
-from model.heliostat_field import *
-from output.plotting import *
+from hstat import mphelper_efficiency_imagegen
+from model.heliostat_field import create_heliostat_field
 from experimental_params import experimental_params as exp
 
 # System dimensions
@@ -43,7 +43,12 @@ if __name__ == "__main__":
     # azimuths = np.array((-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70))
     azimuths = np.array((0, 15, 30, 45, 60, 70))
 
-    efficiencies = {}
+    data = {
+        'collection_fractions': {},
+        'ideal_mirror_tilts': {},
+        'heliostat_thetas': {},
+        'mirror_thetas': {}
+    }
     for i, elevation in enumerate(elevations):
         args = []
 
@@ -53,12 +58,14 @@ if __name__ == "__main__":
                         f"data/images/{elevation}_{azimuth}_25Mrays_intensity.png"])
 
         with mp.Pool(worker_threads) as pool:
-        # with mp.Pool() as pool:
             efficiency_results = pool.starmap(mphelper_efficiency_imagegen, args)
 
         for i, result in enumerate(efficiency_results):
-            # pool.starmap() preserves order of arguments in results returned
-            efficiencies[(elevation, azimuths[i])] = result
+            idx = (elevation, azimuths[i])
+            data['collection_fractions'][idx] = result['collection_fraction']
+            data['ideal_mirror_tilts'][idx] = result['ideal_mirror_tilts']
+            data['heliostat_thetas'][idx] = result['heliostat_thetas']
+            data['mirror_thetas'][idx] = result['mirror_thetas']
 
-    with open('data/25Mrays_last.pkl', 'wb') as file:
-        pkl.dump(efficiencies, file)
+    with open(f'data/exprange_10degtilt_25Mrays_last.pkl', 'wb') as file:
+        pkl.dump(data, file)
