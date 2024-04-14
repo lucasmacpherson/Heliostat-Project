@@ -1,7 +1,7 @@
 import numpy as np
 
-from heliostat_raytracer.model.heliostat import calculate_ideal_tilt, calculate_mirror_normal, calculate_mirror_positions, tilt_mirror_normal, vector_to_receiver
-from heliostat_raytracer.raytracing.vector import angle_between_deg, calculate_reflection
+from model.heliostat import calculate_ideal_tilt, calculate_mirror_normal, calculate_mirror_positions, tilt_mirror_normal, vector_to_receiver
+from raytracing.vector import angle_between_deg, calculate_reflection
 
 def create_heliostat_field(size, layout):
     """

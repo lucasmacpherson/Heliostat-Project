@@ -4,8 +4,8 @@ from PIL import Image, ImageDraw
 from scipy.ndimage import gaussian_filter
 
 from experimental_params import experimental_params as exp
-from heliostat_raytracer.raytracing.vector import *
-from heliostat_raytracer.raytracing.raytracer import *
+from raytracing.vector import *
+from raytracing.raytracer import *
 
 def position_to_pixels(pos, receiver_pos=exp.RECEIVER_POSITION.value, image_size=exp.CAMERA_IMAGESIZE.value, pixel_to_mm=exp.CAMERA_PIXEL_TO_MM.value):
     pos = pos - receiver_pos

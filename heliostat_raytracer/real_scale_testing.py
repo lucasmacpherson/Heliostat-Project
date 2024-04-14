@@ -2,13 +2,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 import sys, os
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(parent_dir)
 
-from heliostat_raytracer.hstat import calculate_collection_fraction, raytrace_uniform_incidence
-from heliostat_raytracer.model.heliostat_field import *
-from heliostat_raytracer.output.plotting import *
-from heliostat_raytracer.output.images import *
+from hstat import calculate_collection_fraction, raytrace_uniform_incidence
+from model.heliostat_field import *
+from output.plotting import *
+from output.images import *
 
 from experimental_params import experimental_params as exp
 
@@ -37,7 +35,7 @@ tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts=tilts)
 model = create_geometry(model, (0.5, 0.5), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
-raycasts = 100**2
+raycasts = 500**2
 beam_size = 2.0
 start_height = 0.20
 source_dist = 12

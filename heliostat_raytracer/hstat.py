@@ -1,9 +1,9 @@
-from heliostat_raytracer.model.heliostat_field import align_heliostat_field, create_geometry
-from heliostat_raytracer.output.images import intensity_image
-from heliostat_raytracer.raytracing.raytracer import \
+from model.heliostat_field import align_heliostat_field, create_geometry
+from output.images import intensity_image
+from raytracing.raytracer import \
     generate_source_incidence, generate_uniform_incidence, get_rays_at_target, run_raytracer
-from heliostat_raytracer.raytracing.vector import vector_from_azimuth_elevation
-from heliostat_raytracer.experimental_params import experimental_params as exp
+from raytracing.vector import vector_from_azimuth_elevation
+from experimental_params import experimental_params as exp
 
 def raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height):
     model['incident_vector'] = incident_vec
