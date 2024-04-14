@@ -3,7 +3,7 @@ import numpy as np
 import multiprocessing as mp
 import pickle as pkl
 
-from hstat import mphelper_efficiency_imagegen
+from hstat import mphelper_alldata_imagegen
 from model.heliostat_field import create_heliostat_field
 from experimental_params import experimental_params as exp
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                         f"data/images/{elevation}_{azimuth}_25Mrays_intensity.png"])
 
         with mp.Pool(worker_threads) as pool:
-            efficiency_results = pool.starmap(mphelper_efficiency_imagegen, args)
+            efficiency_results = pool.starmap(mphelper_alldata_imagegen, args)
 
         for i, result in enumerate(efficiency_results):
             idx = (elevation, azimuths[i])
