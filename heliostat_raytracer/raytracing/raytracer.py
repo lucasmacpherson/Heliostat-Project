@@ -1,8 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from heliostat import *
-from vector import *
+from heliostat_raytracer.raytracing.vector import *
 
 def uniform_2D_grid(beam_size, raycasts):
     if raycasts**0.5 % 1 != 0: 

@@ -3,8 +3,8 @@ import numpy as np
 import multiprocessing as mp
 import pickle as pkl
 
-from heliostat_field import *
-from plotting import *
+from model.heliostat_field import *
+from output.plotting import *
 from experimental_params import experimental_params as exp
 
 # System dimensions

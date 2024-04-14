@@ -15,6 +15,12 @@ def norm_vector(vector: np.ndarray):
 def distance(vec1: np.ndarray, vec2: np.ndarray):
     return magnitude(vec2 - vec1)
 
+def calculate_reflection(mirror_norm, incident_vec):
+    """
+    Calculate the normalised direction vector of the reflected ray
+    """
+    return norm_vector(np.array(incident_vec - 2*mirror_norm.dot(incident_vec.dot(mirror_norm))))
+
 def calculate_rotation_matrix(u: np.ndarray, theta):
     # Source: https://stackoverflow.com/questions/17763655/rotation-of-a-point-in-3d-about-an-arbitrary-axis-using-python
     stheta = np.sin(theta)

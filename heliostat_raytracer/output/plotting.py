@@ -2,9 +2,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 import pickle as pkl
 
-import heliostat as hst
-from vector import *
-from raytracer import *
+import heliostat_raytracer.model.heliostat as hst
+from heliostat_raytracer.raytracing.vector import *
+from heliostat_raytracer.raytracing.raytracer import *
 
 def heliostat_field_figure(model, scale=1):
     fig = plt.figure()

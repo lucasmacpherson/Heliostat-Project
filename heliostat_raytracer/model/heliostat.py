@@ -1,6 +1,6 @@
 import numpy as np
 
-from vector import *
+from heliostat_raytracer.raytracing.vector import *
 
 def vector_to_receiver(hstat, recevier) -> np.ndarray:
     """
@@ -24,12 +24,6 @@ def calculate_mirror_normal(receiver_vec, incident_vec):
         return -np.array(np.matmul(R, incident_vec))
     else:
         return -incident_vec
-
-def calculate_reflection(mirror_norm, incident_vec):
-    """
-    Calculate the normalised direction vector of the reflected ray
-    """
-    return norm_vector(np.array(incident_vec - 2*mirror_norm.dot(incident_vec.dot(mirror_norm))))
 
 def calculate_mirror_positions(hstat, mirror_normal, receiver_vec, mirror_sep):
     """

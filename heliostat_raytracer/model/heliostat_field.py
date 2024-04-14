@@ -2,11 +2,11 @@ import numpy as np
 from tqdm import tqdm
 from enum import Enum
 
-from heliostat import *
-from raytracer import *
-from images import intensity_image
+from heliostat_raytracer.model.heliostat import *
+from heliostat_raytracer.raytracing.raytracer import *
+from heliostat_raytracer.output.images import intensity_image
 from experimental_params import experimental_params as exp
-from vector import *
+from heliostat_raytracer.raytracing.vector import *
 
 def create_heliostat_field(size, layout):
     """

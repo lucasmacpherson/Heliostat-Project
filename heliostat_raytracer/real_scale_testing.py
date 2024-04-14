@@ -5,9 +5,9 @@ import sys, os
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-from heliostat_field import *
-from plotting import *
-from images import *
+from heliostat_raytracer.model.heliostat_field import *
+from heliostat_raytracer.output.plotting import *
+from heliostat_raytracer.output.images import *
 
 from experimental_params import experimental_params as exp
 
