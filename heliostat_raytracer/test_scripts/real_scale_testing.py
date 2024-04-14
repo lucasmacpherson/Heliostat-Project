@@ -11,8 +11,8 @@ from images import *
 
 from experimental_params import experimental_params as exp
 
-# hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
-hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
+hstats = create_heliostat_field(exp.HELIOSTAT_SEPERATION.value, [2, 2])
+# hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
 system_extent = np.array([
     np.array((0.3, 0.5, -0.3)),
     np.array((-0.2, -0.5, 0.2))
@@ -33,16 +33,16 @@ incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 tilt_deg = -10
 tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.HELIOSTAT_WIDTH.value, tilts='ideal')
+model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts='ideal')
 model = create_geometry(model, (0.5, 0.5), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
-raycasts = [250, 250]
-beam_size = 3.0
+raycasts = 100**2
+beam_size = 2.0
 start_height = 0.20
 source_dist = 12
 
-# model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
-model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
+model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+# model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
 efficiency = calculate_collection_fraction(model)
 print(f"Elevation angle: {elevation}, Azimuth: {azimuth} had collection efficiency {efficiency*100}%")
 

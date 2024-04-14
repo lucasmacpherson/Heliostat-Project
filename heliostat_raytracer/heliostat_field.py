@@ -133,3 +133,12 @@ def mphelper_efficiency_imagegen(hstats, incident_elev, incident_azi, receiver_p
         img.save(fname)
 
     return collection_frac
+
+def mphelper_alldata_imagegen(hstats, incident_elev, incident_azi, receiver_pos, mirror_sep, receiver_size, mirror_size, beam_size, start_height, raycasts, tilts=None, ylim=(-1, 2), fname=''):
+    incident_vec = -1*vector_from_azimuth_elevation(incident_azi, incident_elev)
+    model = align_heliostat_field(hstats, incident_vec, receiver_pos, mirror_sep, tilts=tilts)
+    model = create_geometry(model, receiver_size, mirror_size, ylim)
+    print(f"Raytracing system with elev={incident_elev}, azim={incident_azi}...")
+    model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+
+    
