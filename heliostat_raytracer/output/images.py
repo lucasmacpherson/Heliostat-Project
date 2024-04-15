@@ -30,7 +30,7 @@ def target_image_points(image_shape, model, pointsize):
 
     return img
 
-def create_intensity_distribution(points, image_size, sigma):
+def create_intensity_distribution(points, image_size, sigma=4, intensity_factor=1/4):
     """
     Creates an intensity distribution image from a list of points.
 
@@ -62,7 +62,7 @@ def create_intensity_distribution(points, image_size, sigma):
     # Normalize the image
     max_intensity = np.max(image)
     if max_intensity > 0:
-        image = (image / 2 * 255).astype(np.uint8)
+        image = (image * 255 * intensity_factor).astype(np.uint8)
 
     # Create and return the PIL image
     return Image.fromarray(image, 'L')

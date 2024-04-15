@@ -56,7 +56,7 @@ def mphelper_alldata_imagegen(hstats, incident_elev, incident_azi, receiver_pos,
     model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
 
     if fname != '':
-        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+        img = intensity_image(model, exp.CAMERA_IMAGESIZE.value)
         img.save(fname)
 
     result = {
