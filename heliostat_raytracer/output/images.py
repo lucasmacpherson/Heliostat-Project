@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import gaussian_filter, binary_closing
 
 from experimental_params import experimental_params as exp
 from raytracing.vector import *
@@ -56,7 +56,7 @@ def create_intensity_distribution(points, image_size, sigma=4, intensity_factor=
         except IndexError:
             print(f"Point ({x},{y}) outside camera frame -> discarding...")
 
-    # Apply Gaussian convolution
+    # Apply Gaussian convolution only to regions with non-zero intensity
     image = gaussian_filter(image, sigma=sigma)
 
     # Normalize the image
@@ -67,7 +67,7 @@ def create_intensity_distribution(points, image_size, sigma=4, intensity_factor=
     # Create and return the PIL image
     return Image.fromarray(image, 'L')
 
-def intensity_image(model, image_size, sigma):
+def intensity_image(model, image_size):
     rays = get_rays_at_target(model)
     receiver_pos = model['receiver_position']
 
@@ -76,7 +76,7 @@ def intensity_image(model, image_size, sigma):
         pos = position_to_pixels(ray[-1][0], receiver_pos, image_size)
         points.append(np.array((pos[0], pos[1])))
 
-    img = create_intensity_distribution(points, image_size, sigma)
+    img = create_intensity_distribution(points, image_size)
     return img
 
 def target_image_hist(image_shape, model):

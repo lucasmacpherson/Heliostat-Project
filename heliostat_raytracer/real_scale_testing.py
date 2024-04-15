@@ -1,9 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-import sys, os
-
-from hstat import calculate_collection_fraction, raytrace_uniform_incidence
+from hstat import calculate_collection_fraction, raytrace_source_incidence, raytrace_uniform_incidence
 from model.heliostat_field import *
 from output.plotting import *
 from output.images import *
@@ -18,7 +16,7 @@ system_extent = np.array([
 ])
 
 azimuth = 0
-elevation = 42
+elevation = 60
 # incident_vec = norm_vector(np.array((-1*np.cos(elevation*np.pi/180), 0, -1)))
 incident_vec = -1*vector_from_azimuth_elevation(azimuth, elevation)
 
@@ -35,13 +33,14 @@ tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 model = align_heliostat_field(hstats, incident_vec, exp.RECEIVER_POSITION.value, exp.MIRROR_SEPERATION.value, tilts=tilts)
 model = create_geometry(model, (0.5, 0.5), exp.MIRROR_RADIUS.value, exp.YLIM.value)
 
-raycasts = 500**2
-beam_size = 2.0
+# raycasts = 500**2
+raycasts = 500, 500
+beam_size = 3.0
 start_height = 0.20
 source_dist = 12
 
-model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
-# model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
+# model = raytrace_uniform_incidence(model, incident_vec, beam_size, raycasts, start_height)
+model = raytrace_source_incidence(model, source_dist, incident_vec, system_extent, raycasts)
 efficiency = calculate_collection_fraction(model)
 print(f"Elevation angle: {elevation}, Azimuth: {azimuth} had collection efficiency {efficiency*100}%")
 
@@ -54,5 +53,5 @@ plt.show()
 fig, ax = show_target_plane(model)
 plt.show()
 
-img = intensity_image(model, exp.CAMERA_IMAGESIZE.value, sigma=4)
+img = intensity_image(model, exp.CAMERA_IMAGESIZE.value)
 img.save("data/test_intensity_distribution.png")
