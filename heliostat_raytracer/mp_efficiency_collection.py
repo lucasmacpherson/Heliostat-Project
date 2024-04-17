@@ -16,24 +16,25 @@ mirror_size = exp.MIRROR_RADIUS.value
 receiver_pos = exp.RECEIVER_POSITION.value
 receiver_size = exp.RECEIVER_SIZE.value
 
+# System parameters
+hstat_layout = [2, 2]
+tilt_deg = -10
+
 # Source incidence parameters
 system_extent = np.array([
     np.array((0.3, 0.5, -0.3)),
     np.array((-0.2, -0.5, 0.2))
 ])
 source_dist = exp.SOURCE_DISTANCE.value
+theta_range = 8 * np.pi/180
+phi_range = 15 * np.pi/180
 
 # Uniform incidence parameters
 beam_size = 2.0
 start_height = 0.2
 
-raycasts = 5000, 5000
-
-# System parameters
-hstat_layout = [2, 2]
-tilt_deg = -10
-
 # Process parameters
+raycasts = 25_000_000
 worker_threads = 8
 run_name = "exprange_10degtilt_25Mrays"
 
@@ -43,7 +44,6 @@ if __name__ == "__main__":
     # hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
     tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
 
-    # Incident ray only in -x direction (-x, 0, -1)
     # elevations = np.array((15, 30, 45, 55, 60))
     elevations = np.array((15, 30, 45, 60))
     # azimuths = np.array((-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70))
@@ -60,8 +60,8 @@ if __name__ == "__main__":
 
         for i, azimuth in enumerate(azimuths):
             args.append([hstats, elevation, azimuth, receiver_pos, mirror_sep, receiver_size, 
-                        mirror_size, source_dist, system_extent, raycasts, tilts, (-1, 2),
-                        f"data/images/{run_name}/{elevation}_{azimuth}_intensity.png"])
+                        mirror_size, source_dist, system_extent, raycasts, (theta_range, phi_range), 
+                        tilts, (-1, 2), f"data/images/{run_name}/{elevation}_{azimuth}_intensity.png"])
 
         with mp.Pool(worker_threads) as pool:
             efficiency_results = pool.starmap(mphelper_alldata_imagegen, args)

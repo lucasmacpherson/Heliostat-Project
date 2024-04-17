@@ -30,7 +30,7 @@ def target_image_points(image_shape, model, pointsize):
 
     return img
 
-def create_intensity_distribution(points, image_size, sigma=4, intensity_factor=1/4):
+def create_intensity_distribution(points, image_size, sigma=4, intensity_factor=1/6):
     """
     Creates an intensity distribution image from a list of points.
 

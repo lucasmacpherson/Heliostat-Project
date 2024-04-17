@@ -29,21 +29,43 @@ def generate_uniform_incidence(beam_size, raycasts, start_height, incident_vec):
 
     return rays
 
-def generate_source_incidence(source_dist, principle_vec, system_extent, raycasts):
+def generate_source_incidence(source_dist, principle_vec, system_extent, raycasts, ranges=None):
     source_pos = source_dist * -principle_vec
     
-    # Transform into coordinates with source at (0, 0)
-    l1 = system_extent[0] - source_pos
-    l2 = system_extent[1] - source_pos
+    if ranges is None:
+        # WARNING - The angular area does not appear to be consistent for different
+        # principle vectors! This means the results can't be compared - much better
+        # to use fixed theta & phi ranges for the whole run than system_extent
 
-    r1, theta1, phi1 = cartesian_to_spherical(l1[0], l1[1], l1[2])
-    r2, theta2, phi2 = cartesian_to_spherical(l2[0], l2[1], l2[2])
-    # Choose correct phi value to take interval between l1, l2
-    phi2 = phi2 + 2*np.pi
+        # Transform into coordinates with source at (0, 0)
+        l1 = system_extent[0] - source_pos 
+        l2 = system_extent[1] - source_pos
+
+        r1, theta1, phi1 = cartesian_to_spherical(l1[0], l1[1], l1[2])
+        r2, theta2, phi2 = cartesian_to_spherical(l2[0], l2[1], l2[2])
+
+        # Choose correct phi value to take interval between l1, l2
+        if abs(phi2 - phi1) > np.pi:
+            phi2 = phi2 + 2*np.pi
+    else:
+        r, theta, phi = cartesian_to_spherical(principle_vec[0], principle_vec[1], principle_vec[2])
+        theta2 = theta + ranges[0] / 2
+        theta1 = theta - ranges[0] / 2
+        phi2 = phi + ranges[1] / 2
+        phi1 = phi - ranges[1] / 2
+
+    # Evenly distribute raycasts in phi and theta directions
+    theta_range = abs(theta2 - theta1)
+    phi_range = abs(phi2 - phi1)
+    # print(f"Theta Range: {theta_range * 180/np.pi}")
+    # print(f"Phi Range: {phi_range * 180/np.pi}")
+    k = np.sqrt(raycasts / (theta_range * phi_range))
+    theta_casts = int(np.floor(k * theta_range))
+    phi_casts = int(np.floor(k * phi_range))
 
     tt, pp = np.meshgrid(
-        np.linspace(theta2, theta1, raycasts[0], endpoint=True), 
-        np.linspace(phi2, phi1, raycasts[1], endpoint=True)
+        np.linspace(theta2, theta1, theta_casts, endpoint=True), 
+        np.linspace(phi2, phi1, phi_casts, endpoint=True)
     )
 
     thetas = tt.ravel()
