@@ -106,7 +106,7 @@ def show_system(model):
 
     for rect in model['geometry']['rectangles']:
         surf = get_rectangle_surface(rect)
-        ax.plot_trisurf(surf[:, 0], surf[:, 1], surf[:, 2], linewidth=0, color='lightblue', alpha=0.2)
+        ax.plot_trisurf(surf[:, 0], surf[:, 1], surf[:, 2], linewidth=0, color='lightblue', alpha=0.5)
 
     for circ in model['geometry']['circles']:
         surf = get_circle_surface(circ)
