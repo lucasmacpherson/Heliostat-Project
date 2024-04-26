@@ -364,24 +364,24 @@ heatmap(tilts, azimuthals, fs = 12, fourhst = False)
 heatmap(tilts, azimuthals, fs = 12, fourhst = True)
 
 # tilts = [15, 30, 45, 60]
-# for t in tilts:
-#     plt.clf()
-#     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
-#     plt.clf()
-#     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
-#     plt.clf()
-#     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
+for t in tilts:
+    plt.clf()
+    averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
+    plt.clf()
+    averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
+    plt.clf()
+    averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
 
 # averaged_fourmirr(45, azimuthals, ['blue', 'm', 'red'], sim_type= s_type)
 
 
 
 # tilts = [15, 30, 45, 60]
-# for t in tilts:
-#     plt.clf()
-#     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
-#     plt.clf()
-#     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
-#     plt.clf()
-#     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
+for t in tilts:
+    plt.clf()
+    averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
+    plt.clf()
+    averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
+    plt.clf()
+    averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
 #averaged_eightmirr(15, azimuthals, ['blue', 'm', 'red'], s_type)
