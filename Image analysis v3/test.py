@@ -1,6 +1,6 @@
 # from edge_detector_v3 import *
 # from LED_analyser import quick_plot
-import pickle
+import pickle as pkl
 import numpy as np
 import matplotlib.pyplot as plt
 import skimage.io as im
@@ -9,8 +9,15 @@ import skimage.io as im
 # plt.imshow(test, norm = "linear")
 # plt.show()
 
-print(f"Calculated for latitude {12}/{8}")
+# a = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
+# print(a[len(a)//2])
+
+file = "Image analysis v3/sim data/2hst_exprange_"+ "ideal" + "tilt_25Mrays_last.pkl"
+f  = open(file, "rb")
+sim_data = pkl.load(f)
+
+print(sim_data["collection_fractions"][(15, -60)])
 
 # colours = ["red", "orange", "green", "blue"]
 # with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:

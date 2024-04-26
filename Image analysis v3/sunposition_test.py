@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from sunposition import sunpos
 from datetime import datetime, timezone, timedelta
 import seaborn as sns
-import pandas as pd
+import pickle as pkl
 
 def gen_times(start, end, steps_per_day, step_size):
 
@@ -119,6 +119,67 @@ def heatmap_vals(lon, lat, times, xy_bins, show = False):
 
     return bin_height
 
+def heatmap_collection_frac(tilts, azimuthals):
+
+    map = []
+    for tilt in tilts:
+        data = np.loadtxt(("Image analysis v3/" + str(tilt) + " norm data.csv"), delimiter = ",") 
+        data = data.T
+        intensities = data[1]/1.4e6
+        y = np.mean(intensities.reshape(-1, 3), axis = 1)
+        print(tilt)
+        print(y)
+        map.append(y)
+
+    az_labs = ["-70", "-60", "-45", "-30", "-15", "0", "15", "30", "45", "60", "70"]
+    ti_labs = ["15", "30", "45", "60"]
+        
+    map = np.array(map)
+    s = sns.heatmap(map,xticklabels=az_labs, yticklabels=ti_labs)
+
+    s.set_xlabel('Azimuth')
+    s.set_ylabel('Elevation')
+
+    # plt.savefig("Image analysis v3/Final graphs/heatmap.png", dpi= 1000)
+    plt.show()
+
+    return map
+
+def heatmap_sim(data, tilts, azimuthals):
+
+    colls = data["collection_fractions"]
+    map = []
+
+    az_labs = []
+    ti_labs = []
+
+    for i, tilt in enumerate(tilts):
+        points = []
+        ti_labs.append(str(tilt))
+
+        for azim in azimuthals:
+            point = colls[(tilt, np.abs(azim))] * 0.77037571/colls[(45, 0)]
+            points.append(point)
+
+            if i == 0:
+                az_labs.append(str(azim))
+            
+        map.append(points)
+
+    # az_labs = ["-70", "-60", "-45", "-30", "-15", "0", "15", "30", "45", "60", "70"]
+    # ti_labs = ["15", "30", "45", "60"]
+        
+    map = np.array(map)
+    s = sns.heatmap(map,xticklabels=az_labs, yticklabels=ti_labs)
+
+    s.set_xlabel('Azimuth')
+    s.set_ylabel('Elevation')
+
+    # plt.savefig("Image analysis v3/Final graphs/heatmap.png", dpi= 1000)
+    plt.show()
+
+    return map
+
 lon = 40
 lat = 0
 start_time = 0 #if you change this from 0 make sure to do the math that steps per day and size work out
@@ -140,9 +201,12 @@ end = datetime(2023, 12, 31, start_time)
 lats = np.linspace(-70, 70, 6)
 longs = [-180, -90, 0, 90]
 
+tilts = np.arange(15, 75, 15)
+azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
+
 times = gen_times(start, end, steps_per_day, step_size)
 
-elev_az_time_heatmap(lon, lat, times, bins = bin_number, cmap = "flare") 
+#elev_az_time_heatmap(lon, lat, times, bins = 50, cmap = "flare") 
 #latitude_heatmaps(lon, lats, times, bins = bin_number, cols = 3)
 #long_and_lat_heatmaps(longs, lats, times, bins = bin_number, cols = 3)
 
@@ -150,35 +214,17 @@ elev_az_time_heatmap(lon, lat, times, bins = bin_number, cmap = "flare")
 
 
 
+# file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
+file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
 
 
-# #evaluate on a 2 degree grid
-# lon  = np.linspace(-180,180,181)
-# lat = np.linspace(-90,90,91)
-# LON, LAT = np.meshgrid(lon,lat)
-# #at the current time
-# now = datetime.now(timezone.utc)
-# az,zen = sunpos(now,LAT,LON,0)[:2] #discard RA, dec, H
-# #convert zenith to elevation
-# elev = 90 - zen
+f  = open(file, "rb")
+data = pkl.load(f)
 
-# az_single, zen_single = sunpos(now, 40, 30, 0)[:2]
-# print(az_single, 90- zen_single)
+full_tilts = np.arange(0, 70, 5)
+full_azims = np.arange(0, 75, 5)
 
-# #convert azimuth to vectors
-# #u, v = np.cos((90-az)*np.pi/180), np.sin((90-az)*np.pi/180)
-# #plot
-# fig, ax = plt.subplots(figsize=(6,3),layout='constrained')
-# img = ax.imshow(elev,cmap=plt.cm.CMRmap,origin='lower',vmin=-90,vmax=90,extent=(-181,181,-91,91))
-# s = slice(5,-1,5) # equivalent to 5:-1:5
-# #ax.quiver(lon[s],lat[s],u[s,s],v[s,s],pivot='mid',scale_units='xy')
+#map = heatmap_collection_frac(tilts, azimuthals)
+sim_map = heatmap_sim(data, full_tilts, full_azims)
 
-# ax.contour(lon,lat,elev,[0])
-# ax.set_aspect('equal')
-# ax.set_xticks(np.arange(-180,181,45))
-# ax.set_yticks(np.arange(-90,91,45))
-# ax.set_xlabel('Longitude (deg)')
-# ax.set_ylabel('Latitude (deg)')
-# cb = plt.colorbar(img,ax=ax,shrink=0.8,pad=0.03)
-# cb.set_label('Sun Elevation (deg)')
-# plt.show()
+
