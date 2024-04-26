@@ -217,7 +217,7 @@ def sim_binary(image):
 
 
 def analyse_sim_images(folder_name, tilts, sim_data):
-    colours = ["red", "gold", "darkgreen", "blue"]
+    colours = ["red", "gold", "darkgreen", "blue", "pink", "purple"]
 
     #azimuthals = np.array([-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70])
     azimuthals = np.array([0, 15, 30, 45, 60, 70])

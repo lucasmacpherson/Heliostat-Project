@@ -13,11 +13,6 @@ import skimage.io as im
 
 # print(a[len(a)//2])
 
-file = "Image analysis v3/sim data/2hst_exprange_"+ "ideal" + "tilt_25Mrays_last.pkl"
-f  = open(file, "rb")
-sim_data = pkl.load(f)
-
-print(sim_data["collection_fractions"][(15, -60)])
 
 # colours = ["red", "orange", "green", "blue"]
 # with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:

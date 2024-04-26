@@ -171,7 +171,7 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys())
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal tilt ($^\\circ$)", fontsize = fontsize)
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
 
     if save:
@@ -256,7 +256,7 @@ def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6
 
     else: plt.legend(loc = "lower center")
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal tilt ($^\\circ$)", fontsize = fontsize)
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
     
     plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " averaged azimuth by tilt graph.png"), dpi = 1500)
@@ -323,7 +323,7 @@ def averaged_eightmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e
 
     else: plt.legend(loc = "lower center")
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal tilt ($^\\circ$)", fontsize = fontsize)
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
     
     plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " 4hst averaged graph.png"), dpi = 1500)
