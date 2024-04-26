@@ -205,7 +205,13 @@ def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6
             sim = sim_data["collection_fractions"][(tilt, np.abs(azim))]*factor
             sims.append(sim)
 
-        plt.plot(azimuthals, sims, label = "Simulated data ", color = colors[1], marker = marker)
+        if sim_type == "ideal":
+            color = colors[1]
+
+        elif sim_type == "10deg":
+            color = colors[2]
+
+        plt.plot(azimuthals, sims, label = "Simulated data "+ sim_type, color = colors[1], marker = marker)
 
     elif sim_type == "both":
 
