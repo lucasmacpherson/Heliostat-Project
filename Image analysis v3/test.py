@@ -14,11 +14,11 @@ from skimage.measure import block_reduce
 
 # print(a[len(a)//2])
 
-# file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
-# f  = open(file, "rb")
-# data = pkl.load(f)
+file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
+f  = open(file, "rb")
+data = pkl.load(f)
 
-# print(data["collection_fractions"].keys())
+print(data["collection_fractions"][(45, 0)]*25e6/4)
 
 
 # N_points = 1000
@@ -30,14 +30,6 @@ from skimage.measure import block_reduce
 # print(bin_height)
 # plt.show()
 
-# full_tilts = np.arange(0, 65, 5)
-# full_azims = np.arange(-60, 65, 5)
-
-a = np.stack((np.arange(1,22), np.arange(20,41), np.arange(3,24)))
-
-arr_reduced = block_reduce(a, block_size=(3,3), func=np.mean)
-print(a)
-print(arr_reduced)
 
 # colours = ["red", "orange", "green", "blue"]
 # with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
