@@ -4,6 +4,7 @@ import pickle as pkl
 import numpy as np
 import matplotlib.pyplot as plt
 import skimage.io as im
+from skimage.measure import block_reduce
 
 # test = im.imread("Image analysis v3/4 heliostat 8_04/60_70_0.png")
 # plt.imshow(test, norm = "linear")
@@ -32,14 +33,11 @@ import skimage.io as im
 # full_tilts = np.arange(0, 65, 5)
 # full_azims = np.arange(-60, 65, 5)
 
-x_bin_edges = np.arange(-60, 70, 5) - 2.5
-y_bin_edges = np.arange(0, 70, 5) -2.5
-np.append(x_bin_edges, x_bin_edges[-1] + 5)
-np.append(y_bin_edges, y_bin_edges[-1] + 5)
+a = np.stack((np.arange(1,22), np.arange(20,41), np.arange(3,24)))
 
-print(x_bin_edges)
-print(y_bin_edges)
-
+arr_reduced = block_reduce(a, block_size=(3,3), func=np.mean)
+print(a)
+print(arr_reduced)
 
 # colours = ["red", "orange", "green", "blue"]
 # with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
