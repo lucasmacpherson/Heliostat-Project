@@ -82,16 +82,18 @@ def plot_all_heliostat_thetas(data, tilts, azimuthals, colours):
             ax.plot(mirrd_azimuthals, angles, label = ("Heliostat " + str(i +1)), color = colours[i])
             # ax.set_xlabel("Azimuthal angle")
             # ax.set_ylabel("Theta")
-            ax.set_title((f"Tilt {str(tilt)} deg"))
+            ax.set_title((f"{str(tilt)}$^\circ$ Elevation"))
 
 
-    fig.supxlabel("Azimuthal angle")
-    fig.supylabel("Theta")
+    fig.supxlabel("Azimuth ($^\circ$)", fontsize = 12)
+    fig.supylabel("Theta ($^\circ$)", fontsize = 12)
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys(), bbox_to_anchor=(1.01, 1))
 
     plt.tight_layout()
+
+    #plt.savefig("Image analysis v3/report graphs/theta for all heliostats and tilt angles.png", dpi = 1500)
     plt.show()
 
 def plot_mirror_thetas(data, tilt, azimuthals, colours):
@@ -201,7 +203,6 @@ def collections_and_cosine(datas, tilts, azimuthals, colours, names, symbols):
 
     plt.show()
 
-
 def sim_binary(image):
 
     dim = np.shape(image)
@@ -217,7 +218,8 @@ def sim_binary(image):
 
 
 def analyse_sim_images(folder_name, tilts, sim_data):
-    colours = ["red", "gold", "darkgreen", "blue", "pink", "purple"]
+    colours = ["red", "gold", "darkgreen", "blue"]
+    fig = plt.figure(figsize = (7,5))
 
     #azimuthals = np.array([-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70])
     azimuthals = np.array([0, 15, 30, 45, 60, 70])
@@ -248,15 +250,22 @@ def analyse_sim_images(folder_name, tilts, sim_data):
             sim_int = colls[(t, a)]
             sim_intensities.append(sim_int)
         
+        sim_intensities = np.array(sim_intensities)
         intensities = np.array(intensities) * (sim_intensities[0]/intensities[0])
+        maximum = np.max(intensities)
+        intensities *= (1/maximum) /1.05
+        sim_intensities *= (1/maximum) /1.05
             
         # print(azimuthals)
         # print(intensities)
-        plt.scatter(azimuthals, intensities, label = "Image " + str(t), color = colours[i])
-        plt.scatter(azimuthals, sim_intensities, label = "Collection " + str(t), color = colours[i], marker = "^")
+        plt.scatter(azimuthals, intensities, label = f"Image analysis {str(t)}$^\circ$", color = colours[i], marker = "^")
+        plt.plot(azimuthals, sim_intensities, label = f"Collection fraction {str(t)}$^\circ$", color = colours[i], marker = ".")
 
-    plt.legend()
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel("Azimuthals ($^\circ$)", fontsize = 12)
+    plt.ylabel("Incident intensity (a.u.)", fontsize = 12)
     plt.tight_layout()
+    #plt.savefig("Image analysis v3/report graphs/Simulation collection fraction vs. image analysis.png", dpi = 1500)
     plt.show()
     #return total_intensity, pixels_illuminated, separation, variance
 
@@ -274,12 +283,12 @@ if __name__ == "__main__":
     non_ideal_data = pkl.load(f2)
 
     #plot_collections(data, tilts, azimuthals, colours)
-    # plot_heliostat_thetas(data, 15, azimuthals, colours)
-    #plot_all_heliostat_thetas(data, tilts, azimuthals, colours)
+    #plot_heliostat_thetas(data, 15, azimuthals, colours)
+    plot_all_heliostat_thetas(data, tilts, azimuthals, colours)
     #plot_mirror_thetas(data, 60, azimuthals, colours)
 
     #compare_collections([data, non_ideal_data], [15], azimuthals, colours, names = ["Ideal", "Non-ideal"], symbols = ["o", "x"])
     #collections_and_cosine([data, non_ideal_data], [30], azimuthals, colours, names = ["Ideal", "Non-ideal"], symbols = ["o", "x"])
 
     #tilts = [15]
-    analyse_sim_images("2hst_exprange_10degtilt_25Mrays", tilts, data)
+    #analyse_sim_images("2hst_exprange_10degtilt_25Mrays", tilts, data)

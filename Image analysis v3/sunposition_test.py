@@ -120,7 +120,7 @@ def heatmap_vals(lon, lat, times, xy_bins, show = False):
 
     return bin_height
 
-def heatmap_vals_restricted(lat, times, azimuthals, tilts, dir_offset = 0, show = False, lon = 0):
+def heatmap_vals_restricted(lat, times, azimuthals, tilts, dir_offset = 0, show = False, lon = 0, highres = False):
 
     az,zen = sunpos(times,lat,lon,0)[:2]
     elev = 90 - zen
@@ -142,8 +142,18 @@ def heatmap_vals_restricted(lat, times, azimuthals, tilts, dir_offset = 0, show 
     df_range = df_range[df_range.Azimuthal < max_az]
     df_range = df_range[df_range.Azimuthal > min_az]
 
-    bin_height = plt.hist2d(df_range["Azimuthal"], df_range["Elevation"], [len(azimuthals), 4])[0]
+    if not highres:
+        bin_height = plt.hist2d(df_range["Azimuthal"], df_range["Elevation"], bins = [[-67.5, -52.5, -37.5, -22.5, -7.5, 7.5, 22.5, 37.5, 52.5, 67.5], [7.5, 22.5, 37.5, 52.5, 67.5]])[0]
 
+    elif highres:
+        x_bin_edges = np.arange(-60, 70, 5) - 2.5
+        y_bin_edges = np.arange(0, 70, 5) -2.5
+        np.append(x_bin_edges, x_bin_edges[-1] + 5)
+        np.append(y_bin_edges, y_bin_edges[-1] + 5)
+        x_bin_edges.tolist()
+        y_bin_edges.tolist()
+
+        bin_height = plt.hist2d(df_range["Azimuthal"], df_range["Elevation"], bins = [[x_bin_edges], [y_bin_edges]])[0]
     # plt.set_xlabel('Azimuth ($^\\circ$)')
     # plt.set_ylabel('Elevation ($^\\circ$)')
 
@@ -194,11 +204,11 @@ def heatmap_collection_frac(tilts, azimuthals, fourhst = False, cut_off = True, 
         s.set_ylabel('Elevation ($^\\circ$)')
 
         # plt.savefig("Image analysis v3/Final graphs/heatmap.png", dpi= 1000)
-        #plt.show()
+        plt.show()
 
     return map
 
-def heatmap_sim(data, tilts, azimuthals):
+def heatmap_sim(data, tilts, azimuthals, show = False):
 
     colls = data["collection_fractions"]
     map = []
@@ -225,11 +235,12 @@ def heatmap_sim(data, tilts, azimuthals):
     map = np.array(map)
     s = sns.heatmap(map,xticklabels=az_labs, yticklabels=ti_labs)
 
-    s.set_xlabel('Azimuth ($^\\circ$)')
-    s.set_ylabel('Elevation ($^\\circ$)')
+    if show:
+        s.set_xlabel('Azimuth ($^\\circ$)')
+        s.set_ylabel('Elevation ($^\\circ$)')
 
     # plt.savefig("Image analysis v3/Final graphs/heatmap.png", dpi= 1000)
-    #plt.show()
+        plt.show()
 
     return map
 
@@ -248,9 +259,15 @@ def latitude_efficiency(map, tilts, azimuthals, longitude, latitude, times, dir_
     efficiency = "NOT DONE YET"
     return efficiency
 
-def save_efficiency_data(offset_directions, latitudes, sim_data):
-    map = heatmap_collection_frac(tilts, azimuthals, show = False)
-    sim_map = heatmap_sim(data, tilts, azimuthals)
+def save_efficiency_data(offset_directions, latitudes, sim_data, fourhst = False):
+    tilts = np.arange(15, 75, 15)
+    azimuthals = [-60, -45, -30, -15, 0, 15, 30, 45, 60]
+
+    map = heatmap_collection_frac(tilts, azimuthals, show = False, fourhst= fourhst)
+    sim_map = heatmap_sim(data, tilts, azimuthals, show = False)
+
+    factor = map[1][4]/sim_map[1][4]
+    sim_map = sim_map * factor
 
     all_exp = []
     all_sim = []
@@ -259,7 +276,8 @@ def save_efficiency_data(offset_directions, latitudes, sim_data):
         sim_sums = []
 
         for lat in tqdm(latitudes):
-            hours = heatmap_vals_restricted(lat, times, azimuthals, tilts, dir_offset = dir_off)
+            plt.clf()
+            hours = heatmap_vals_restricted(lat, times, azimuthals, tilts, dir_offset = dir_off, show = False)
             
             efficiency = hours * map.T
             sum = np.sum(efficiency)
@@ -271,32 +289,77 @@ def save_efficiency_data(offset_directions, latitudes, sim_data):
         all_sim.append(sim_sums)
         all_exp.append(sums)
 
-    np.savetxt("Image analysis v3/Efficiency data/Experimental efficiency data.csv", all_exp, delimiter = ',')
-    np.savetxt("Image analysis v3/Efficiency data/Ideal simulated efficiency data.csv", all_sim, delimiter = ',')
+    if not fourhst:
+        np.savetxt("Image analysis v3/Efficiency data/Experimental efficiency data new.csv", all_exp, delimiter = ',')
+    if fourhst:
+        np.savetxt("Image analysis v3/Efficiency data/Experimental 4hst efficiency data new.csv", all_exp, delimiter = ',')
+    
+    #np.savetxt("Image analysis v3/Efficiency data/Ideal simulated efficiency data.csv", all_sim, delimiter = ',')
 
-def plot_efficiency_data(colours, labels, test_latitudes):
+def highres_efficiency_data(offset_directions, latitudes, sim_data):
+    tilts = np.arange(0, 70, 5)
+    azimuthals = np.arange(0, 75, 5)
+    sim_map = heatmap_sim(data, tilts, azimuthals)
+
+    all_sim = []
+    for dir_off in offset_directions:
+        sim_sums = []
+
+        for lat in tqdm(latitudes):
+            hours = heatmap_vals_restricted(lat, times, azimuthals, tilts, dir_offset = dir_off, highres=True)
+
+            sim_efficiency = hours * sim_map.T
+            sim_sums.append(np.sum(sim_efficiency))
+
+        all_sim.append(sim_sums)
+
+    np.savetxt("Image analysis v3/Efficiency data/High res simulated efficiency data new.csv", all_sim, delimiter = ',')
+
+
+def plot_efficiency_data(colours, labels, test_latitudes, fourhst = False, highres = False):
 
     fig = plt.figure(figsize = (8,5))
     labels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-
-    all_exp = np.loadtxt("Image analysis v3/Efficiency data/Experimental efficiency data.csv", delimiter = ",")
-    all_sim = np.loadtxt("Image analysis v3/Efficiency data/Ideal simulated efficiency data.csv", delimiter = ',')
     
-    all_exp = all_exp/np.max(all_sim)
-    all_sim = all_sim/np.max(all_sim)
+    if highres:
+        all_sim = np.loadtxt("Image analysis v3/Efficiency data/High res simulated efficiency data.csv", delimiter = ',')
+    elif not highres:
+        all_sim = np.loadtxt("Image analysis v3/Efficiency data/Ideal simulated efficiency data.csv", delimiter = ',')
+    
+    if fourhst:
+        all_exp = np.loadtxt("Image analysis v3/Efficiency data/Experimental 4hst efficiency data new.csv", delimiter = ",")
+        all_sim *= 2.2
+    elif not fourhst:
+        all_exp = np.loadtxt("Image analysis v3/Efficiency data/Experimental efficiency data new.csv", delimiter = ",")
+
+    # factor = (all_exp[-1][0]/all_sim[-1][0])*1
+    # exp_max = np.max(all_exp)
+    # all_exp = (all_exp/exp_max)
+    # all_sim = (all_sim* 1/np.max(all_sim))
+    #all_sim = (all_sim/exp_max)*factor
+
+    sim_max = np.max(all_sim)
+    all_exp = (all_exp/sim_max)
+    all_sim = (all_sim/sim_max)
+    
+
+    sim_latitudes = np.arange(-90, 95, 5)
     
     for i, off in enumerate(all_exp):
         offset = offsets[i]
         label = labels[i]
         plt.plot(test_latitudes, off, label = f"{label} Facing", color = colours[i], linestyle = "solid", linewidth = 4, alpha = 0.8)
-        plt.plot(test_latitudes, all_sim[i], color = colours[i], linestyle = "dashed", alpha = 0.5)
+        plt.plot(sim_latitudes, all_sim[i], color = colours[i], linestyle = "dashed", alpha = 0.5)
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xlabel("Latitude ($^\\circ$)", fontsize = 12)
     plt.ylabel("Efficiency (a.u.)", fontsize = 12)
-    plt.savefig("Image analysis v3/report graphs/Performance.png")
+    if fourhst:
+        plt.savefig("Image analysis v3/report graphs/Performance 4hst new.png", dpi = 1500)
+    else:
+        plt.savefig("Image analysis v3/report graphs/Performance 2hst new.png", dpi = 1500)
     plt.tight_layout()
     plt.show()
 
@@ -348,10 +411,17 @@ data = pkl.load(f)
 
 #testing latitudes
 offsets = np.arange(0, 360, 45)
-test_latitudes = np.arange(-90, 100, 5)
+# offsets = [0]
+test_latitudes = np.arange(-90, 92, 2)
+# test_latitudes = np.arange(-90, 95, 5)
 colours = ["red", "orange", "gold", "green", "#00ccff", "blue", "#ff66ff", "#8a2be2"]
 labels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 
-#save_efficiency_data(offsets, test_latitudes, data)
-plot_efficiency_data(colours, labels, test_latitudes)
+# save_efficiency_data(offsets, test_latitudes, data)
+# save_efficiency_data(offsets, test_latitudes, data, fourhst = True)
+# print("Done with 4hst data")
+highres_efficiency_data(offsets, test_latitudes, data)
+#print("Done with high res data")
 
+#plot_efficiency_data(colours, labels, test_latitudes, fourhst = True, highres = False)
+  

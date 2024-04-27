@@ -13,6 +13,33 @@ import skimage.io as im
 
 # print(a[len(a)//2])
 
+# file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
+# f  = open(file, "rb")
+# data = pkl.load(f)
+
+# print(data["collection_fractions"].keys())
+
+
+# N_points = 1000
+# x = np.random.randn(N_points) 
+# y = 4 * x + np.random.randn(1000) + 50
+   
+# bin_height = plt.hist2d(x, y, bins = [[-67.5, -52.5, -37.5, -22.5, -7.5, 7.5, 22.5, 37.5, 52.5, 67.5], [7.5, 22.5, 37.5, 52.5, 67.5]])
+
+# print(bin_height)
+# plt.show()
+
+# full_tilts = np.arange(0, 65, 5)
+# full_azims = np.arange(-60, 65, 5)
+
+x_bin_edges = np.arange(-60, 70, 5) - 2.5
+y_bin_edges = np.arange(0, 70, 5) -2.5
+np.append(x_bin_edges, x_bin_edges[-1] + 5)
+np.append(y_bin_edges, y_bin_edges[-1] + 5)
+
+print(x_bin_edges)
+print(y_bin_edges)
+
 
 # colours = ["red", "orange", "green", "blue"]
 # with open('raytracer_data-18.03/all_simages_25Mrays_uniform.pkl', 'rb') as f:
