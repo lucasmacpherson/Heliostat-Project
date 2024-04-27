@@ -7,17 +7,23 @@ def plot_collections(data, tilts, azimuthals, colours):
 
     colls = data["collection_fractions"]
 
+    neg = azimuthals[::-1][:-1]*-1
+    mirrd_azimuthals = np.concatenate((neg, azimuthals))
+
     for i, tilt in enumerate(tilts):
-        for azim in azimuthals:
-            frac = colls[(tilt, azim)] * 100
-            plt.scatter(azim, frac, label = str(tilt), color = colours[i])
+        y = []
+        for azim in mirrd_azimuthals:
+            frac = colls[(tilt, np.abs(azim))] * 100
+            y.append(frac)
+            #plt.scatter(azim, frac, label = str(tilt), color = colours[i])
+        plt.plot(mirrd_azimuthals, y, label = str(tilt), color = colours[i], marker = ".")
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
-    plt.legend(by_label.values(), by_label.keys())
-    plt.title("Collection fractions")
-    plt.xlabel("Azimuthal tilt")
+    plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel("Azimuthal tilt ($^\circ$")
     plt.ylabel("Collection % (a.u.)")
+    plt.tight_layout()
 
     plt.show()
 
@@ -269,6 +275,33 @@ def analyse_sim_images(folder_name, tilts, sim_data):
     plt.show()
     #return total_intensity, pixels_illuminated, separation, variance
 
+def plot_collections_vs_cosine(data, tilts, azimuthals, colours):
+
+    colls = data["collection_fractions"]
+
+    theta = data["heliostat_thetas"]
+    print(theta)
+
+    # neg = azimuthals[::-1][:-1]*-1
+    # mirrd_azimuthals = np.concatenate((neg, azimuthals))
+
+    # for i, tilt in enumerate(tilts):
+    #     y = []
+    #     for azim in mirrd_azimuthals:
+    #         frac = colls[(tilt, np.abs(azim))] * 100
+    #         y.append(frac)
+    #         #plt.scatter(azim, frac, label = str(tilt), color = colours[i])
+    #     plt.plot(mirrd_azimuthals, y, label = str(tilt), color = colours[i], marker = ".")
+
+    # handles, labels = plt.gca().get_legend_handles_labels()
+    # by_label = dict(zip(labels, handles))
+    # plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
+    # plt.xlabel("Azimuthal tilt ($^\circ$")
+    # plt.ylabel("Collection % (a.u.)")
+    # plt.tight_layout()
+
+    # plt.show()
+
 if __name__ == "__main__":
     file = "Image analysis v3/sim data/exprange_idealtilt_25Mrays_last.pkl"
 
@@ -284,8 +317,10 @@ if __name__ == "__main__":
 
     #plot_collections(data, tilts, azimuthals, colours)
     #plot_heliostat_thetas(data, 15, azimuthals, colours)
-    plot_all_heliostat_thetas(data, tilts, azimuthals, colours)
+    #plot_all_heliostat_thetas(data, tilts, azimuthals, colours)
     #plot_mirror_thetas(data, 60, azimuthals, colours)
+
+    plot_collections_vs_cosine()
 
     #compare_collections([data, non_ideal_data], [15], azimuthals, colours, names = ["Ideal", "Non-ideal"], symbols = ["o", "x"])
     #collections_and_cosine([data, non_ideal_data], [30], azimuthals, colours, names = ["Ideal", "Non-ideal"], symbols = ["o", "x"])
