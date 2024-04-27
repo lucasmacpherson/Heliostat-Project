@@ -103,6 +103,7 @@ def plot_by_object_num(tilt, azimuthals, folder: str, mirror_numbers, iterations
 
             ints.append(total_intensity)
             areas.append(pixels_illuminated)
+            
 
             if not average:
                 ax1.scatter(azim, total_intensity, color = col, label = str(num_objs))

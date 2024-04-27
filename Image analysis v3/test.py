@@ -18,7 +18,7 @@ file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
 f  = open(file, "rb")
 data = pkl.load(f)
 
-print(data["collection_fractions"][(45, 0)]*25e6/4)
+print(data["collection_fractions"].keys())
 
 
 # N_points = 1000

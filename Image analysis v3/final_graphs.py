@@ -126,6 +126,16 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
     index = len(object_num)//2 - 1
     norm = intensities[index]*4/object_num[index]
 
+    for i, num in enumerate(object_num):
+
+        if num == 4:
+            plt.scatter(azimuths[i], intensities[i], label = "Experimental data", color = colors[0])
+            print(intensities[i])
+
+        elif num != 4:
+            plt.scatter(azimuths[i], intensities[i], label = "Unnormalised data", marker = 'x', color = colors[0])
+            plt.scatter(azimuths[i], intensities[i]*4/num, label = "Normalised data", color = colors[0], alpha = 0.3)
+
     if sim_type == "ideal" or sim_type == "10deg":
         file = "Image analysis v3/sim data/2hst_exprange_"+ sim_type + "tilt_25Mrays_last.pkl"
         f  = open(file, "rb")
@@ -139,8 +149,14 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
         for azim in azimuthals:
             sim = sim_data["collection_fractions"][(tilt, np.abs(azim))]*factor
             sims.append(sim)
+        
+        if sim_type == "10deg":
+            lbl = "Imperfect simulation"
 
-        plt.plot(azimuthals, sims, label = "Simulated data " + sim_type, color = colors[1], marker = marker)
+        elif sim_type == "Ideal":
+            lbl = "Ideal simulation"
+
+        plt.scatter(azimuthals, sims, label = lbl, color = colors[1], marker =  "^")
 
     elif sim_type == "both":
 
@@ -166,17 +182,7 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
 
             
         plt.plot(azimuthals, ideal_sims, label = "Ideal Simulated", color = colors[1], marker = marker)
-        plt.plot(azimuthals, ten_sims, label = "10deg Simulated", color = colors[2], marker = marker)
-
-    for i, num in enumerate(object_num):
-
-        if num == 4:
-            plt.scatter(azimuths[i], intensities[i], label = "Experimental data", color = colors[0])
-            print(intensities[i])
-
-        elif num != 4:
-            plt.scatter(azimuths[i], intensities[i], label = "Unnormalised data", marker = 'x', color = colors[0])
-            plt.scatter(azimuths[i], intensities[i]*4/num, label = "Normalised data", color = colors[0], alpha = 0.3)
+        plt.plot(azimuthals, ten_sims, label = "Imperfect Simulation", color = colors[2], marker = marker)
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
@@ -186,9 +192,10 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
     plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
 
     if save:
-        plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " with sim graph.png"), dpi = 1500)
+        plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " non averaged.png"), dpi = 1500)
 
-    plt.show()
+    #plt.show()
+    plt.clf()
 
 def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6, fontsize = 12, scale = True, marker = "."):
 
@@ -352,8 +359,8 @@ tilts = [15, 30, 45, 60]
 azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
 # plot_eight_and_four(45)
-plot_all([15, 30, 45, 60], colours, heliostats = "two")
-plot_all([15, 30, 45, 60], colours, heliostats = "four")
+# plot_all([15, 30, 45, 60], colours, heliostats = "two")
+# plot_all([15, 30, 45, 60], colours, heliostats = "four")
 
 #plot_all_with_sim(tilts, colours, heliostats = "four")
 
@@ -372,10 +379,10 @@ mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"),
 
  
 s_type = "10deg"
-#non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-# non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-# non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-# non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
 
 #heatmap(tilts, azimuthals, fs = 12, fourhst = False)
 #heatmap(tilts, azimuthals, fs = 12, fourhst = True)

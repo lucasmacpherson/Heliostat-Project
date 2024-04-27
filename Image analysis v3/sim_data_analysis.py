@@ -223,19 +223,23 @@ def sim_binary(image):
     return binary
 
 
-def analyse_sim_images(folder_name, tilts, sim_data):
+def analyse_sim_images(folder_name, tilts, azimuthals, sim_data):
     colours = ["red", "gold", "darkgreen", "blue"]
     fig = plt.figure(figsize = (7,5))
 
     #azimuthals = np.array([-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70])
-    azimuthals = np.array([0, 15, 30, 45, 60, 70])
-
+    # azimuthals = np.array([0, 15, 30, 45, 60, 70])
     colls = sim_data["collection_fractions"]
-    
+
     plt.figure(figsize = (6,4))
     for i, t in enumerate(tilts):
         intensities = []
         sim_intensities = []
+
+        areas = []
+        seps = []
+        vars = []
+        azims = []
 
         for a in azimuthals:
             image_name = "Image analysis v3/simulation pictures/" + folder_name + f"/{str(t)}_{str(np.abs(a))}_intensity.png"
@@ -255,6 +259,11 @@ def analyse_sim_images(folder_name, tilts, sim_data):
 
             sim_int = colls[(t, a)]
             sim_intensities.append(sim_int)
+
+            areas.append(pixels_illuminated)
+            seps.append(separation)
+            vars.append(variance)
+            azims.append(a)
         
         sim_intensities = np.array(sim_intensities)
         intensities = np.array(intensities) * (sim_intensities[0]/intensities[0])
@@ -267,6 +276,9 @@ def analyse_sim_images(folder_name, tilts, sim_data):
         plt.scatter(azimuthals, intensities, label = f"Image analysis {str(t)}$^\circ$", color = colours[i], marker = "^")
         plt.plot(azimuthals, sim_intensities, label = f"Collection fraction {str(t)}$^\circ$", color = colours[i], marker = ".")
 
+        data = np.array([azims, intensities, areas, seps, vars])
+        np.savetxt(("Image analysis v3/"+ str(t) + " simages full idealtilt data.csv"), data.T, delimiter=",")
+    
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xlabel("Azimuthals ($^\circ$)", fontsize = 12)
     plt.ylabel("Incident intensity (a.u.)", fontsize = 12)
@@ -277,33 +289,85 @@ def analyse_sim_images(folder_name, tilts, sim_data):
 
 def plot_collections_vs_cosine(data, tilts, azimuthals, colours):
 
+    fig = plt.figure(figsize = (7, 5))
     colls = data["collection_fractions"]
 
-    theta = data["heliostat_thetas"]
-    print(theta)
+    angles = data["heliostat_thetas"]
 
-    # neg = azimuthals[::-1][:-1]*-1
-    # mirrd_azimuthals = np.concatenate((neg, azimuthals))
+    neg = azimuthals[::-1][:-1]*-1
+    mirrd_azimuthals = np.concatenate((neg, azimuthals))
 
-    # for i, tilt in enumerate(tilts):
-    #     y = []
-    #     for azim in mirrd_azimuthals:
-    #         frac = colls[(tilt, np.abs(azim))] * 100
-    #         y.append(frac)
-    #         #plt.scatter(azim, frac, label = str(tilt), color = colours[i])
-    #     plt.plot(mirrd_azimuthals, y, label = str(tilt), color = colours[i], marker = ".")
+    for i, tilt in enumerate(tilts):
+        y = []
+        cos = []
+        for azim in mirrd_azimuthals:
+            frac = colls[(tilt, np.abs(azim))] * 100
+            thetas = angles[(tilt, np.abs(azim))] * np.pi/360
+            cos_vals = np.cos(thetas)
+            y.append(frac)
+            cos.append(np.mean(cos_vals))
+            #plt.scatter(azim, frac, label = str(tilt), color = colours[i])
+        factor = y[len(y)//2]/cos[len(cos)//2]
 
-    # handles, labels = plt.gca().get_legend_handles_labels()
-    # by_label = dict(zip(labels, handles))
-    # plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
-    # plt.xlabel("Azimuthal tilt ($^\circ$")
-    # plt.ylabel("Collection % (a.u.)")
-    # plt.tight_layout()
+        cos = np.array(cos)*factor
+        plt.plot(mirrd_azimuthals, y, label = f"Simulation for {str(tilt)}$^\circ$", color = colours[i])
+        plt.scatter(mirrd_azimuthals, cos, label = f"Cosine losses {str(tilt)}$^\circ$", color = colours[i], marker = "^")
 
-    # plt.show()
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel("Azimuthal tilt ($^\circ$)", fontsize = 12)
+    plt.ylabel("Collection % (a.u.)", fontsize = 12)
+    plt.tight_layout()
+    plt.savefig("Image analysis v3/report graphs/Ideal sim vs cosine losses", dpi = 1500)
+
+    plt.show()
+
+def plot_all_sim_intensities(data, data2, tilts, azimuthals, colours):
+
+    fig = plt.figure(figsize = (7, 5))
+    colls = data["collection_fractions"]
+
+    angles = data["heliostat_thetas"]
+
+    colls2 = data2["collection_fractions"]
+
+    neg = azimuthals[::-1][:-1]*-1
+    mirrd_azimuthals = np.concatenate((neg, azimuthals))
+
+    for i, tilt in enumerate(tilts):
+        y = []
+        y2 = []
+        cos = []
+        for azim in mirrd_azimuthals:
+            frac = colls[(tilt, np.abs(azim))] * 100
+            frac2 = colls2[(tilt, np.abs(azim))] * 100
+            thetas = angles[(tilt, np.abs(azim))] * np.pi/360
+            cos_vals = np.cos(thetas)
+            y.append(frac)
+            y2.append(frac2)
+            cos.append(np.mean(cos_vals))
+            #plt.scatter(azim, frac, label = str(tilt), color = colours[i])
+        factor = y[len(y)//2]/cos[len(cos)//2]
+
+        cos = np.array(cos)*factor
+        plt.plot(mirrd_azimuthals, y, label = f"Simulation for {str(tilt)}$^\circ$", color = colours[i])
+        plt.scatter(mirrd_azimuthals, y2, label = f"Non-ideal simulation for {str(tilt)}$^\circ$", color = colours[i], marker = "x")
+        plt.scatter(mirrd_azimuthals, cos, label = f"Cosine losses {str(tilt)}$^\circ$", color = colours[i], marker = "o")
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel("Azimuthal tilt ($^\circ$)", fontsize = 12)
+    plt.ylabel("Collection % (a.u.)", fontsize = 12)
+    plt.tight_layout()
+    #plt.savefig("Image analysis v3/report graphs/Ideal sim vs cosine losses", dpi = 1500)
+
+    plt.show()
 
 if __name__ == "__main__":
-    file = "Image analysis v3/sim data/exprange_idealtilt_25Mrays_last.pkl"
+    # file = "Image analysis v3/sim data/exprange_idealtilt_25Mrays_last.pkl"
+    file = "Image analysis v3/sim data/fullrange_idealtilt_25Mrays_last.pkl"
 
     f  = open(file, "rb")
     data = pkl.load(f)
@@ -320,10 +384,13 @@ if __name__ == "__main__":
     #plot_all_heliostat_thetas(data, tilts, azimuthals, colours)
     #plot_mirror_thetas(data, 60, azimuthals, colours)
 
-    plot_collections_vs_cosine()
+    #plot_collections_vs_cosine(data, tilts, azimuthals, colours)
+    #plot_all_sim_intensities(data, non_ideal_data, tilts, azimuthals, colours)
 
     #compare_collections([data, non_ideal_data], [15], azimuthals, colours, names = ["Ideal", "Non-ideal"], symbols = ["o", "x"])
     #collections_and_cosine([data, non_ideal_data], [30], azimuthals, colours, names = ["Ideal", "Non-ideal"], symbols = ["o", "x"])
 
-    #tilts = [15]
-    #analyse_sim_images("2hst_exprange_10degtilt_25Mrays", tilts, data)
+    #full_tilts = np.arange(0, 65, 5)
+    full_azims = np.arange(0, 75, 5)
+    
+    analyse_sim_images("fullrange_idealtilt_25Mrays", tilts, full_azims, data)
