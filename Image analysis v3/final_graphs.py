@@ -8,6 +8,18 @@ from tqdm import tqdm
 #compare ideal and non ideal tilt
 #for both 4 and 8 make sim vs cosine losses
 
+SMALL_SIZE = 11
+MEDIUM_SIZE = 14
+BIGGER_SIZE = 16
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 def plot_eight_and_four(tilt, int_factor = 1.4e6):
     four_data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " norm data.csv"), delimiter = ",")
     eight_data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter = ",")
@@ -116,7 +128,7 @@ def plot_all_with_sim(tilts, colours, heliostats:str, int_factor = 1.4e6, save =
     plt.ylabel("Intensity")
     plt.show()
 
-def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, int_factor = 1.4e6, fontsize = 12, save = False, marker = "."):
+def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, int_factor = 1.4e6, fontsize = MEDIUM_SIZE, save = False, marker = "."):
     data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " data.csv"), delimiter=",")
     data = data.T
 
@@ -197,7 +209,7 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
     #plt.show()
     plt.clf()
 
-def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6, fontsize = 12, scale = True, marker = "."):
+def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6, fontsize = MEDIUM_SIZE, scale = True, marker = "."):
 
     data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 4 nnorm data.csv"), delimiter=",")
     data = data.T
@@ -280,7 +292,7 @@ def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6
     plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " averaged azimuth by tilt graph.png"), dpi = 1500)
     #plt.show()
 
-def averaged_eightmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6, fontsize = 12, scale = True, marker = "."):
+def averaged_eightmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6, fontsize = MEDIUM_SIZE, scale = True, marker = "."):
 
     data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter=",")
     data = data.T
@@ -378,18 +390,18 @@ folder = "Image analysis v3/full data set/"
 mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
 
  
-s_type = "10deg"
-non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+s_type = "both"
+#non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+# non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+# non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+# non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
 
 #heatmap(tilts, azimuthals, fs = 12, fourhst = False)
 #heatmap(tilts, azimuthals, fs = 12, fourhst = True)
 
 # tilts = [15, 30, 45, 60]
 
-#uncomment from here to regenerate all averaged graphs
+# uncomment from here to regenerate all averaged graphs
 # for t in tqdm(tilts):
 #     plt.clf()
 #     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")

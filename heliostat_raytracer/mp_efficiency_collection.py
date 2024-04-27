@@ -42,7 +42,8 @@ if __name__ == "__main__":
     mp.freeze_support()
     hstats = create_heliostat_field(hstat_sep, hstat_layout)
     # hstats = [[0.226, -0.226, 0], [0.226, 0.226, 0]]
-    tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
+    # tilts = np.array([tilt_deg * np.pi/180]).repeat(2*len(hstats))
+    tilts = 'ideal'
 
     # elevations = np.array((15, 30, 45, 55, 60))
     elevations = np.array((15, 30, 45, 60))
