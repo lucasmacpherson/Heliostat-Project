@@ -25,7 +25,7 @@ def trim(img, background, y_range, x_range, back_given = True):
     
     return image, b_image
 
-def gen_binary(image, imgtitle = "Title not given", savefig = False, threshold = 10, disk_size:int = 5):
+def gen_binary(image, imgtitle = "Title not given", savefig = False, threshold = 10, disk_size:int = 5, saveclosing = False):
     """generates and saves binary version of image, 1 for object 0 for background"""
 
     dim = np.shape(image)
@@ -41,6 +41,15 @@ def gen_binary(image, imgtitle = "Title not given", savefig = False, threshold =
 
     footprint = disk(disk_size)
     closed = closing(binary, footprint)
+
+    if saveclosing:
+        plt.imshow(binary)
+        plt.savefig("Image analysis v3/binary.pdf")
+        plt.show()
+
+        plt.imshow(closed)
+        plt.savefig("Image analysis v3/closed.pdf")
+        plt.show()
 
     if savefig: 
         plt.figure()
@@ -219,6 +228,10 @@ def weighted_pixel_dist(data, image, target_loc):
 # back_3 = im.imread("Images 23_1/5_back_2.jpg")
 # back_4 = im.imread("Images 23_1/5_back_3.jpg")
 # back_5 = im.imread("Images 23_1/5_back_4.jpg")
+
+if __name__ == "__main__":
+    image = im.imread("Image analysis v3/full data set/15_-30_1.png")
+    gen_binary(image, threshold = 15, disk_size = 40, saveclosing= True)
 
 
 # fig = plt.figure(figsize=(10, 7)) 

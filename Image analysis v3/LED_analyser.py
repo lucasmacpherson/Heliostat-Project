@@ -537,7 +537,7 @@ if __name__ == "__main__":
     # #quick_plot(45, azimuthals=azimuthals, cos = cos, norm = norms[2])
     # quick_plot(60, azimuthals=azimuthals, cos = cos, norm = norms[3])
 
-    # sep(tilts, azimuthals, colours)
+    #sep(tilts, azimuthals, colours, average = True, simages = True)
 
     #for full data set
     folder = "Image analysis v3/full data set/"
@@ -562,7 +562,7 @@ if __name__ == "__main__":
     m8_60 = [7,8,8,8,7,7,6]
 
 
-    #plot_by_object_num(15, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_15, 1, [744,564], colours, normalise = True, total_mirrs= 8)
+    # plot_by_object_num(15, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_15, 1, [744,564], colours, normalise = True, total_mirrs= 8)
     # plot_by_object_num(30, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_30, 1, [744,564], colours, normalise = True, total_mirrs= 8)
     # plot_by_object_num(45, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_45, 1, [744,564], colours, normalise = True, total_mirrs= 8)
     # plot_by_object_num(60, [-30, 0, 15, 30, 45, 60, 70], folder_8, m8_60, 1, [744,564], colours, normalise = True, total_mirrs= 8)
