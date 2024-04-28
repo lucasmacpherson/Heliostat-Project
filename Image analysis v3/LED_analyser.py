@@ -306,28 +306,73 @@ def sep_and_variance(tilt, azimuthals):
     ax1.set_title("Separation from target")
     ax2.set_title("Variance")
 
-def sep(tilts, azimuthals, colors, average = False):
+def sep(tilts, azimuthals, colors, average = False, fourhst = False, fontsizes = [11, 12, 14], marker = "o", simages = False, sim_type = "ideal"):
 
+    fig = plt.figure(figsize = (8,5))
+    
     for i, t in enumerate(tilts):
-        data = np.loadtxt(("Image analysis v3/"+ str(t) + " norm data.csv"), delimiter=",")
+        if not fourhst:
+            data = np.loadtxt(("Image analysis v3/"+ str(t) + " 4 nnorm data.csv"), delimiter=",")
+
+        elif fourhst:
+            data = np.loadtxt(("Image analysis v3/"+ str(t) + " 8 norm data.csv"), delimiter=",")
+
+        if simages:
+            if sim_type == "ideal":
+                data = np.loadtxt(("Image analysis v3/"+ str(t) + " simages idealtilt data.csv"), delimiter=",")
+            elif sim_type == "10deg":
+                data = np.loadtxt(("Image analysis v3/"+ str(t) + " simages 10deg data.csv"), delimiter=",")
+
+
         data = data.T
 
         seps = np.array(data[3])/45
 
         if not average:
-            plt.scatter(data[0], seps, color = colors[i], label = str(t) + " data")
-
-        elif average:
-            y = np.mean(seps.reshape(-1, 3), axis = 1)
-            plt.scatter(azimuthals, y, color = colors[i], marker = "o", label = str(t) + " data")
+            plt.scatter(data[0], seps, color = colors[i], marker = marker, label = str(t) + "$^\circ$ Elevation", alpha = 0.8)
+            if not fourhst:
+                y = np.mean(seps.reshape(-1, 3), axis = 1)
+            elif fourhst:
+                y = seps * np.random.randint(-10,10, size = 11)*0.01 + 1
 
             total_mean = np.mean(y)
             plt.plot([-70, 70], [total_mean, total_mean], color = colors[i], linestyle = "-")
 
+        elif average:
+            if not fourhst and not simages:
+                y = np.mean(seps.reshape(-1, 3), axis = 1)
+            elif fourhst and not simages:
+                y = seps
+            elif simages:
+                neg = seps[::-1][:-1]
+                y = np.concatenate((neg, seps))
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)")
-    plt.ylabel("Separation of CoM from target (cm)")
-    plt.legend()
+
+            plt.scatter(azimuthals, y, color = colors[i], marker = marker, label = str(t) + "$^\circ$ Elevation")
+
+            total_mean = np.mean(y)
+            plt.plot([-70, 70], [total_mean, total_mean], color = colors[i], linestyle = "-", linewidth = 5, alpha = 0.7)
+
+
+    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsizes[-1])
+    plt.ylabel("Separation of CoM from target (cm)", fontsize = fontsizes[-1])
+    plt.legend(fontsize = fontsizes[1], loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xticks(fontsize = fontsizes[0])
+    plt.yticks(fontsize = fontsizes[0])
+    #plt.ylim(3, 12)
+
+    plt.tight_layout()
+
+    lblone = "full"
+    lbltwo = "2 hst"
+    if average:
+        lblone = "average"
+    if fourhst:
+        lbltwo = "4 hst"
+    if simages:
+        lbltwo = "simulated " + sim_type 
+
+    plt.savefig(f"Image analysis v3/report graphs/Separation {lblone} {lbltwo}.png", dpi = 1500)
     plt.show()
 
 def averaged_tilt_with_sim(tilt, azimuthals, cos, norm, object_num, colors, sim_data, sim_num, tilt_index, int_factor = 1.4e6, fontsize = 12, scale = True):
@@ -535,7 +580,9 @@ if __name__ == "__main__":
     # averaged_tilt_with_sim(45, azimuthals, cos_45, norm_45, mirr_45, [col], sim_data, sim_num, 2)
     # averaged_tilt_with_sim(60, azimuthals, cos_60, norm_60, mirr_60, [col], sim_data, sim_num, 3)
 
-    # sep(tilts, azimuthals, colours, average = True)
+    #sep(tilts, azimuthals, colours, average = True)
+    #sep(tilts, azimuthals, colours, average = True, fourhst = True)
+    sep(tilts, azimuthals, colours, average = True, simages = True, sim_type= "10deg")
 
     #all_averaged_tilt_by_azim(tilts, azimuthals, cos_all, norms, mirr_all, colors = colours)
 
@@ -548,7 +595,7 @@ if __name__ == "__main__":
     # plt.show()
     #plot_by_object_num(30, azimuthals, folder, mirr_30, 3, [640, 544], colours, normalise, average)
     #plot_by_object_num(45, azimuthals, folder, mirr_45, 3, [640, 544], colours, normalise, average)
-    plot_by_object_num(60, azimuthals, folder, mirr_60, 3, [640, 544], colours, normalise, average)
+    #plot_by_object_num(60, azimuthals, folder, mirr_60, 3, [640, 544], colours, normalise, average)
 
     #for simulation data
     # folder = "raytracer_data-18.03/images/"
