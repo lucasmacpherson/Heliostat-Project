@@ -45,12 +45,13 @@ def plot_eight_and_four(tilt, int_factor = 1.4e6):
     plt.show()
 
 def plot_all(tilts, colours, heliostats:str, int_factor = 1.4e6):
+    fig = plt.figure(figsize = (8,5))
 
     for i, tilt in enumerate(tilts):
         col = colours[i]
 
         if heliostats == "two":
-            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " norm data.csv"), delimiter = ",")
+            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + "4 nnorm data.csv"), delimiter = ",")
             data = data.T
             intensities = data[1]/int_factor
 
@@ -67,7 +68,9 @@ def plot_all(tilts, colours, heliostats:str, int_factor = 1.4e6):
             data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter = ",")
             data = data.T
             short = data[1]/int_factor
-            err = np.random.randint(1,5,(1,len(short)))*0.02
+
+            all_err = np.loadtxt("Image analysis v3/four helio consistency.csv", delimiter=",")
+            err = all_err.T[i]
 
         else: 
             ValueError("Heliostats should be string 'two' or 'four'")
@@ -76,56 +79,97 @@ def plot_all(tilts, colours, heliostats:str, int_factor = 1.4e6):
         
         plt.errorbar(azim, short, yerr = err, xerr = 4, label = f"{str(tilt)}$^\circ$ Elevation", color = col, marker = "o", ls = 'none', capsize = 3)
 
-    plt.legend()
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xlabel("Azimuthals ($^\circ$)")
     plt.ylabel("Intensity (a.u)")
+    plt.tight_layout()
     plt.savefig(f"Image analysis v3/report graphs/All tilts {heliostats} heliostats.png", dpi = 1500)
     plt.show()
 
 def plot_all_with_sim(tilts, colours, heliostats:str, int_factor = 1.4e6, save = False):
     azim = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
+    fig = plt.figure(figsize=(8,5))
+
+    #all_errs = []
+
     for i, tilt in enumerate(tilts):
         col = colours[i]
 
 
         if heliostats == "two":
-            print("AAAAH NEED SIM DATA HERE NOT DONE")
-            break
             data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " norm data.csv"), delimiter = ",")
             data = data.T
             intensities = data[1]/int_factor
-            short = np.mean(intensities.reshape(-1, 3), axis=1)
-        
-        elif heliostats == "four":
-            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter = ",")
-            data = data.T
-            short = data[1]/(int_factor*2)
 
             f  = open("Image analysis v3/sim data/exprange_idealtilt_25Mrays_last.pkl", "rb")
             simulated = pkl.load(f)
             colls = simulated["collection_fractions"]
+
+            err = []
+
+            for j in range(0, len(azim)):
+                a = intensities[(j*3)]
+                b = intensities[(j*3 + 1)] 
+                c = intensities[(j*3 + 2)]
+                err.append(np.std([a,b,c]))
+            short = np.mean(intensities.reshape(-1, 3), axis=1)
 
             points = []
             
             for az in azim:
                 point = colls[(tilt, np.abs(az))] * short[len(short)//2]/colls[(45, 0)]
                 points.append(point)
+            
+            factor = short[len(short)//2]/points[len(points)//2]
+
+            points = np.array(points)*factor
         
-            plt.plot(azim, points, color = col, label = ("Simulated " + str(tilt)))
+            plt.plot(azim, points, color = col, label = f"{str(tilt)}$^\circ$ Simulated", linewidth = 3, alpha = 0.4)
+        
+        elif heliostats == "four":
+            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter = ",")
+            data = data.T
+            short = data[1]/(int_factor)
+
+
+            f  = open("Image analysis v3/sim data/exprange_idealtilt_25Mrays_last.pkl", "rb")
+            simulated = pkl.load(f)
+            colls = simulated["collection_fractions"]
+            #err = np.random.randint(14,30,(1,len(short)))*0.002
+
+            all_err = np.loadtxt("Image analysis v3/four helio consistency.csv", delimiter=",")
+            err = all_err.T[i]
+
+
+            #all_errs.append(err[0])
+
+            points = []
+            
+            for az in azim:
+                point = colls[(tilt, np.abs(az))] * short[len(short)//2]/colls[(45, 0)]
+                points.append(point)
+
+            factor = short[len(short)//2]/points[len(points)//2]
+            points = np.array(points)*factor
+        
+            plt.plot(azim, points, color = col, label = f"{str(tilt)}$^\circ$ Simulated", linewidth = 3, alpha = 0.4)
 
         else: 
             ValueError("Heliostats should be string 'two' or 'four'")
 
-        plt.scatter(azim, short, color = col, label = str(tilt))
+        #plt.scatter(azim, short, color = col, label = str(tilt))
+        plt.errorbar(azim, short, yerr = err, xerr = 4, label = f"{str(tilt)}$^\circ$ Experimental", color = col, marker = "o", ls = 'none', capsize = 3)
 
-    
+    #np.savetxt("Image analysis v3/four helio consistency.csv", all_errs.T, delimiter=",")
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
 
-    plt.legend(by_label.values(), by_label.keys())
-    plt.xlabel("Azimuthals")
-    plt.ylabel("Intensity")
+    plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel("Azimuthal ($^\circ$)")
+    plt.ylabel("Intensity (a.u)")
+    plt.tight_layout()
+    plt.savefig(f"Image analysis v3/report graphs/All with simulation {heliostats}.png", dpi = 1500)
     plt.show()
 
 def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, int_factor = 1.4e6, fontsize = MEDIUM_SIZE, save = False, marker = "."):
@@ -194,7 +238,7 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
 
             
         plt.plot(azimuthals, ideal_sims, label = "Ideal Simulated", color = colors[1], marker = marker)
-        plt.plot(azimuthals, ten_sims, label = "Imperfect Simulation", color = colors[2], marker = marker)
+        plt.scatter(azimuthals, ten_sims, label = "Imperfect Simulation", color = colors[2], marker = "^")
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
@@ -297,6 +341,8 @@ def averaged_eightmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e
     data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 8 norm data.csv"), delimiter=",")
     data = data.T
 
+    i = int(tilt/15 -1) #this will mess up real bad if you add any other tilts except 15,30,45,60 haha careful!
+
     intensities = data[1]/int_factor
     
     norm = intensities[(len(intensities)//2)]
@@ -351,7 +397,8 @@ def averaged_eightmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e
         plt.scatter(azimuthals, ten_sims, label = "10$^\circ$ Simulation Data", color = colors[2], marker = "^")
 
     
-    err = np.random.randint(3,5,(1,len(intensities)))*0.008
+    all_err = np.loadtxt("Image analysis v3/four helio consistency.csv", delimiter=",")
+    err = all_err.T[i]
     plt.errorbar(azimuthals, intensities, yerr = err, xerr = 4, label = "Experimental data", color = "blue", marker = "o", ls = 'none', capsize = 3)
 
     if tilt < 40:
@@ -374,8 +421,8 @@ azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 # plot_all([15, 30, 45, 60], colours, heliostats = "two")
 # plot_all([15, 30, 45, 60], colours, heliostats = "four")
 
-#plot_all_with_sim(tilts, colours, heliostats = "four")
-
+# plot_all_with_sim(tilts, colours, heliostats = "four")
+#plot_all_with_sim(tilts, colours, heliostats = "two")
 
 
 
@@ -391,7 +438,7 @@ mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"),
 
  
 s_type = "both"
-#non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+# non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
 # non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
 # non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
 # non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
@@ -412,7 +459,7 @@ s_type = "both"
 
 # # averaged_fourmirr(45, azimuthals, ['blue', 'm', 'red'], sim_type= s_type)
 
-# # tilts = [15, 30, 45, 60]
+# tilts = [15, 30, 45, 60]
 # for t in tqdm(tilts):
 #     plt.clf()
 #     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
@@ -420,4 +467,4 @@ s_type = "both"
 #     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
 #     plt.clf()
 #     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
-# #averaged_eightmirr(15, azimuthals, ['blue', 'm', 'red'], s_type)
+#averaged_eightmirr(15, azimuthals, ['blue', 'm', 'red'], s_type)

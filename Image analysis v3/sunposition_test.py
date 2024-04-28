@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 from sunposition import sunpos
 from datetime import datetime, timezone, timedelta
 import seaborn as sns
@@ -26,6 +27,9 @@ def gen_times(start, end, steps_per_day, step_size):
 
 def elev_az_time_heatmap(lon, lat, times, bins = 50, cmap = None):
 
+    #sns.set(font_scale=1.4)
+    sns.set_theme(style="ticks", font_scale = 1.4)
+
     az,zen = sunpos(times,lat,lon,0)[:2] #discard RA, dec, H
     elev = 90 - zen
 
@@ -35,10 +39,16 @@ def elev_az_time_heatmap(lon, lat, times, bins = 50, cmap = None):
     df_day = df[df.Elevation > 0] # only those during the day! 
 
     if cmap is None:
-        sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8))
+        s = sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8, label ="5min increments"))
     else: 
-        sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8), cmap = cmap)
+        s = sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8, label ="5min increments"), cmap = cmap)
 
+    s.set(ylabel='Azimuth ($^\\circ$)', xlabel='Elevation ($^\\circ$)')
+    # set_xlabel('Azimuth ($^\\circ$)', fontize = 12)
+    # s.set_ylabel('Elevation ($^\\circ$)', fontize = 12)
+
+    plt.tight_layout()
+    plt.savefig(f"Image analysis v3/Sun pos heat map for {lat} deg", dpi = 1500)
     plt.show()
 
 def latitude_heatmaps(lon, lats, times, bins = 50, cols = 3, cmap = None):
@@ -63,13 +73,17 @@ def latitude_heatmaps(lon, lats, times, bins = 50, cols = 3, cmap = None):
         ax.set_title(("Latitude " + str(lat)))
         
         if cmap is None:
-            sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8), ax = ax)
+            s = sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8), ax = ax)
         else:
-            sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8), ax = ax, cmap = cmap)
+            s = sns.histplot(df_day, x="Elevation", y="Azimuthal", bins = bins, cbar = True, cbar_kws=dict(shrink=.8), ax = ax, cmap = cmap)
 
         print(f"Calculated for latitude {iter}/{len(lats)}")
         iter += 1
 
+    s.set_xlabel('Azimuth ($^\\circ$)')
+    s.set_ylabel('Elevation ($^\\circ$)')
+    
+    plt.tight_layout()
     plt.show() 
 
 def long_and_lat_heatmaps(longs, lats, times, bins = 50, cols = 3, cmap = None):
@@ -385,8 +399,10 @@ bin_number = 100
 # steps_per_day = 23
 # step_size = 1
 
-steps_per_day = 95
-step_size = 0.25
+# steps_per_day = 95
+# step_size = 0.25
+steps_per_day = 239
+step_size = 0.1
 
 xy_bins = [9, 36] #number of x and y bins respectively
 
@@ -401,8 +417,9 @@ azimuthals = [-60, -45, -30, -15, 0, 15, 30, 45, 60]
 
 times = gen_times(start, end, steps_per_day, step_size)
 
-#elev_az_time_heatmap(lon, lat, times, bins = 50, cmap = "flare") 
-#latitude_heatmaps(lon, lats, times, bins = bin_number, cols = 3)
+# elev_az_time_heatmap(0, 55, times, bins = 50, cmap = "flare") 
+# elev_az_time_heatmap(0, 15, times, bins = 50, cmap = "flare") 
+#latitude_heatmaps(0, [55, 14], times, bins = bin_number, cols = 2)
 #long_and_lat_heatmaps(longs, lats, times, bins = bin_number, cols = 3)
 
 #bin_height = heatmap_vals(lon, lat, times, xy_bins)
