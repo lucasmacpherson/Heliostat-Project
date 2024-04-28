@@ -40,8 +40,8 @@ def plot_eight_and_four(tilt, int_factor = 1.4e6):
     plt.scatter(azim, eight_intensities, color = "blue", label = "Eight")
 
     plt.legend()
-    plt.xlabel("Azimuthals")
-    plt.ylabel("Intensity")
+    plt.xlabel("Azimuthal angle ($^\circ$)")
+    plt.ylabel("Collected energy (a.u.)")
     plt.show()
 
 def plot_all(tilts, colours, heliostats:str, int_factor = 1.4e6):
@@ -51,7 +51,7 @@ def plot_all(tilts, colours, heliostats:str, int_factor = 1.4e6):
         col = colours[i]
 
         if heliostats == "two":
-            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + "4 nnorm data.csv"), delimiter = ",")
+            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 4 nnorm data.csv"), delimiter = ",")
             data = data.T
             intensities = data[1]/int_factor
 
@@ -80,8 +80,8 @@ def plot_all(tilts, colours, heliostats:str, int_factor = 1.4e6):
         plt.errorbar(azim, short, yerr = err, xerr = 4, label = f"{str(tilt)}$^\circ$ Elevation", color = col, marker = "o", ls = 'none', capsize = 3)
 
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.xlabel("Azimuthals ($^\circ$)")
-    plt.ylabel("Intensity (a.u)")
+    plt.xlabel("Azimuthal angle ($^\circ$)")
+    plt.ylabel("Collected energy (a.u.)")
     plt.tight_layout()
     plt.savefig(f"Image analysis v3/report graphs/All tilts {heliostats} heliostats.png", dpi = 1500)
     plt.show()
@@ -98,7 +98,7 @@ def plot_all_with_sim(tilts, colours, heliostats:str, int_factor = 1.4e6, save =
 
 
         if heliostats == "two":
-            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " norm data.csv"), delimiter = ",")
+            data = np.loadtxt(("Image analysis v3/"+ str(tilt) + " 4 nnorm data.csv"), delimiter = ",")
             data = data.T
             intensities = data[1]/int_factor
 
@@ -166,8 +166,8 @@ def plot_all_with_sim(tilts, colours, heliostats:str, int_factor = 1.4e6, save =
     by_label = dict(zip(labels, handles))
 
     plt.legend(by_label.values(), by_label.keys(), loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.xlabel("Azimuthal ($^\circ$)")
-    plt.ylabel("Intensity (a.u)")
+    plt.xlabel("Azimuthal angle ($^\circ$)")
+    plt.ylabel("Collected energy (a.u.)")
     plt.tight_layout()
     plt.savefig(f"Image analysis v3/report graphs/All with simulation {heliostats}.png", dpi = 1500)
     plt.show()
@@ -209,10 +209,10 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
         if sim_type == "10deg":
             lbl = "Imperfect simulation"
 
-        elif sim_type == "Ideal":
+        elif sim_type == "ideal":
             lbl = "Ideal simulation"
 
-        plt.scatter(azimuthals, sims, label = lbl, color = colors[1], marker =  "^")
+        plt.plot(azimuthals, sims, label = lbl, color = colors[1], marker =  "^")
 
     elif sim_type == "both":
 
@@ -244,8 +244,8 @@ def non_averaged_fourmirr(tilt, azimuthals, object_num, colors, sim_type:str, in
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys())
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
-    plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal angle ($^\circ$)", fontsize = fontsize)
+    plt.ylabel("Collected energy (a.u.)", fontsize = fontsize)
 
     if save:
         plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " non averaged.png"), dpi = 1500)
@@ -330,8 +330,8 @@ def averaged_fourmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e6
 
     else: plt.legend(loc = "lower center")
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
-    plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal angle ($^\circ$)", fontsize = fontsize)
+    plt.ylabel("Collected energy (a.u.)", fontsize = fontsize)
     
     plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " averaged azimuth by tilt graph.png"), dpi = 1500)
     #plt.show()
@@ -406,8 +406,8 @@ def averaged_eightmirr(tilt, azimuthals, colors, sim_type:str, int_factor = 1.4e
 
     else: plt.legend(loc = "lower center")
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsize)
-    plt.ylabel("Energy incident on target plane (a.u.)", fontsize = fontsize)
+    plt.xlabel(r"Azimuthal angle ($^\circ$)", fontsize = fontsize)
+    plt.ylabel("Collected energy (a.u.)", fontsize = fontsize)
     
     plt.savefig(("Image analysis v3/report graphs/" + str(tilt) + " " + sim_type + " 4hst averaged graph.png"), dpi = 1500)
     #plt.show()
@@ -418,13 +418,11 @@ tilts = [15, 30, 45, 60]
 azimuthals = [-70, -60, -45, -30, -15, 0, 15, 30, 45, 60, 70]
 
 # plot_eight_and_four(45)
-# plot_all([15, 30, 45, 60], colours, heliostats = "two")
-# plot_all([15, 30, 45, 60], colours, heliostats = "four")
+plot_all([15, 30, 45, 60], colours, heliostats = "two")
+plot_all([15, 30, 45, 60], colours, heliostats = "four")
 
-# plot_all_with_sim(tilts, colours, heliostats = "four")
-#plot_all_with_sim(tilts, colours, heliostats = "two")
-
-
+plot_all_with_sim(tilts, colours, heliostats = "four")
+plot_all_with_sim(tilts, colours, heliostats = "two")
 
 norms = [690122.0, 1066143.7, 1078526.0, 1277268.3]
 norm_15, norm_30, norm_45, norm_60 = norms[0], norms[1], norms[2], norms[3]
@@ -437,34 +435,34 @@ folder = "Image analysis v3/full data set/"
 mirr_15, mirr_30, mirr_45, mirr_60 = np.loadtxt((folder + "mirror_numbers.csv"), skiprows=1, delimiter = ",", unpack = True, usecols=range(1,5))
 
  
-s_type = "both"
-# non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-# non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-# non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
-# non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+s_type = "ideal"
+non_averaged_fourmirr(15, azimuthals, mirr_15, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(30, azimuthals, mirr_30, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(45, azimuthals, mirr_45, ['blue', 'red', 'green'], sim_type = s_type, save = True)
+non_averaged_fourmirr(60, azimuthals, mirr_60, ['blue', 'red', 'green'], sim_type = s_type, save = True)
 
-#heatmap(tilts, azimuthals, fs = 12, fourhst = False)
-#heatmap(tilts, azimuthals, fs = 12, fourhst = True)
+heatmap(tilts, azimuthals, fs = MEDIUM_SIZE, fourhst = False)
+heatmap(tilts, azimuthals, fs = MEDIUM_SIZE, fourhst = True)
 
 # tilts = [15, 30, 45, 60]
 
 # uncomment from here to regenerate all averaged graphs
-# for t in tqdm(tilts):
-#     plt.clf()
-#     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
-#     plt.clf()
-#     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
-#     plt.clf()
-#     averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
+for t in tqdm(tilts):
+    plt.clf()
+    averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
+    plt.clf()
+    averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
+    plt.clf()
+    averaged_fourmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
 
-# # averaged_fourmirr(45, azimuthals, ['blue', 'm', 'red'], sim_type= s_type)
+# averaged_fourmirr(45, azimuthals, ['blue', 'm', 'red'], sim_type= s_type)
 
-# tilts = [15, 30, 45, 60]
-# for t in tqdm(tilts):
-#     plt.clf()
-#     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
-#     plt.clf()
-#     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
-#     plt.clf()
-#     averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
+tilts = [15, 30, 45, 60]
+for t in tqdm(tilts):
+    plt.clf()
+    averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "10deg")
+    plt.clf()
+    averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "ideal")
+    plt.clf()
+    averaged_eightmirr(t, azimuthals, ['blue', 'm', 'red'], sim_type= "both")
 #averaged_eightmirr(15, azimuthals, ['blue', 'm', 'red'], s_type)

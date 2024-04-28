@@ -451,8 +451,7 @@ labels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 # save_efficiency_data(offsets, test_latitudes, data)
 # save_efficiency_data(offsets, test_latitudes, data, fourhst = True)
 # print("Done with 4hst data")
-#highres_efficiency_data(offsets, test_latitudes, data)
-#print("Done with high res data")
+# highres_efficiency_data(offsets, test_latitudes, data)
+# print("Done with high res data")
 
-#plot_efficiency_data(colours, labels, test_latitudes, fourhst = False, highres = False)
-  
+plot_efficiency_data(colours, labels, test_latitudes, fourhst = False, highres = False)

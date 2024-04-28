@@ -3,6 +3,17 @@ import matplotlib.cm as cm
 import pickle as pkl
 import seaborn as sns
 
+SMALL_SIZE = 11
+MEDIUM_SIZE = 14
+BIGGER_SIZE = 16
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 def plot_by_tilt(tilts, azimuthals, folder, iterations, target_loc, colours):
     fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -354,8 +365,8 @@ def sep(tilts, azimuthals, colors, average = False, fourhst = False, fontsizes =
             plt.plot([-70, 70], [total_mean, total_mean], color = colors[i], linestyle = "-", linewidth = 5, alpha = 0.7)
 
 
-    plt.xlabel(r"Azimuthal tilt ($^\circ$)", fontsize = fontsizes[-1])
-    plt.ylabel("Separation of CoM from target (cm)", fontsize = fontsizes[-1])
+    plt.xlabel(r"Azimuthal angle ($^\circ$)", fontsize = MEDIUM_SIZE)
+    plt.ylabel("Separation of CoM from centre (cm)", fontsize = MEDIUM_SIZE)
     plt.legend(fontsize = fontsizes[1], loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(fontsize = fontsizes[0])
     plt.yticks(fontsize = fontsizes[0])
@@ -468,7 +479,7 @@ def normalised_tilt_with_sim(tilt, azimuthals, cos, norm, object_num, colors, si
 
     plt.show()
 
-def heatmap(tilts, azimuthals, fs = 10, fourhst = False):    
+def heatmap(tilts, azimuthals, fs = MEDIUM_SIZE, fourhst = False):    
 
     map = []
     for tilt in tilts:
@@ -492,9 +503,9 @@ def heatmap(tilts, azimuthals, fs = 10, fourhst = False):
     map = np.array(map)
     s = sns.heatmap(map, xticklabels=az_labs, yticklabels=ti_labs)
 
-    s.set_xlabel('Azimuth ($^\circ$)', fontsize = fs)
-    s.set_ylabel('Elevation ($^\circ$)', fontsize = fs)
-    s.collections[0].colorbar.set_label("Energy Incident (a.u.)", fontsize = fs)
+    s.set_xlabel('Azimuthal angle ($^\circ$)', fontsize = fs)
+    s.set_ylabel('Elevation angle ($^\circ$)', fontsize = fs)
+    s.collections[0].colorbar.set_label("Collected energy (a.u.)", fontsize = fs)
 
     if fourhst:
         plt.savefig("Image analysis v3/report graphs/heatmap 4hst.png", dpi= 1000)
@@ -580,9 +591,10 @@ if __name__ == "__main__":
     # averaged_tilt_with_sim(45, azimuthals, cos_45, norm_45, mirr_45, [col], sim_data, sim_num, 2)
     # averaged_tilt_with_sim(60, azimuthals, cos_60, norm_60, mirr_60, [col], sim_data, sim_num, 3)
 
-    #sep(tilts, azimuthals, colours, average = True)
-    #sep(tilts, azimuthals, colours, average = True, fourhst = True)
-    sep(tilts, azimuthals, colours, average = True, simages = True, sim_type= "10deg")
+    sep(tilts, azimuthals, colours, average = True)
+    sep(tilts, azimuthals, colours, average = True, fourhst = True)
+    sep(tilts, azimuthals, colours, average = True, fourhst = True, simages = True, sim_type= "10deg")
+    sep(tilts, azimuthals, colours, average = True, fourhst = True, simages = True, sim_type= "ideal")
 
     #all_averaged_tilt_by_azim(tilts, azimuthals, cos_all, norms, mirr_all, colors = colours)
 
